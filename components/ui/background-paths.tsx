@@ -29,7 +29,7 @@ function FloatingPaths({ position, active }: { position: number; active: boolean
           <motion.path
             key={path.id}
             d={path.d}
-            stroke="#F59E0B"
+            stroke="var(--accent)"
             strokeWidth={path.width}
             strokeOpacity={path.opacity}
             initial={{ pathLength: 0.3, opacity: 0 }}
@@ -75,21 +75,21 @@ export function HeroPaths({
   subtitle,
   children,
 }: HeroPathsProps) {
-  const sectionRef  = useRef<HTMLDivElement>(null);
-  const heroInView  = useInView(sectionRef, { once: false });
+  const sectionRef   = useRef<HTMLDivElement>(null);
+  const heroInView   = useInView(sectionRef, { once: false });
+  const shouldReduce = useReducedMotion();
 
   const renderWord = (word: string, baseDelay: number) =>
     word.split("").map((letter, i) => (
       <motion.span
         key={i}
-        initial={{ y: 80, opacity: 0 }}
+        initial={shouldReduce ? false : { y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{
-          delay: baseDelay + i * 0.028,
-          type: "spring",
-          stiffness: 130,
-          damping: 22,
-        }}
+        transition={
+          shouldReduce
+            ? { duration: 0 }
+            : { delay: baseDelay + i * 0.028, type: "spring", stiffness: 130, damping: 22 }
+        }
         className="inline-block"
       >
         {letter}
@@ -98,15 +98,6 @@ export function HeroPaths({
 
   return (
     <div ref={sectionRef} className="relative min-h-svh w-full flex flex-col justify-center overflow-hidden bg-bg pt-24 pb-16 md:pt-28 md:pb-20">
-      {/* grain */}
-      <div
-        className="pointer-events-none fixed inset-0 z-50 opacity-[0.032]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")`,
-          backgroundSize: "200px 200px",
-        }}
-      />
-
       {/* animated paths — paused when hero is out of viewport to save GPU */}
       <div className="absolute inset-0">
         <FloatingPaths position={1} active={heroInView} />
@@ -147,7 +138,7 @@ export function HeroPaths({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.75 }}
             className="font-display font-normal text-muted tracking-[-0.01em] mb-6"
-            style={{ fontSize: "clamp(1rem, 2.2vw, 1.45rem)" }}
+            style={{ fontSize: "clamp(1.125rem, 2.2vw, 1.45rem)" }}
           >
             {subtitle}
           </motion.p>

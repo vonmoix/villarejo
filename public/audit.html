@@ -6,17 +6,20 @@
 <title>Impeccable Audit — villarejo portfolio</title>
 <style>
   :root {
-    --bg:      #0e0d0b;
-    --surface: #161412;
-    --border:  #2a2620;
-    --accent:  #f59e0b;
-    --ink:     #f0ebe2;
-    --muted:   #9c9590;
-    --subtle:  #5c5651;
-    --red:     #ef4444;
-    --yellow:  #eab308;
-    --green:   #22c55e;
-    --blue:    #60a5fa;
+    --bg:        #fafaf8;
+    --surface:   #f3f2ee;
+    --surface2:  #eceae4;
+    --border:    rgba(0,0,0,0.08);
+    --border-md: rgba(0,0,0,0.12);
+    --accent:    #b45309;
+    --accent-bg: #fef3c7;
+    --ink:       #1a1917;
+    --muted:     #5a554e;
+    --subtle:    #9b9488;
+    --red:       #dc2626;
+    --yellow:    #ca8a04;
+    --green:     #16a34a;
+    --blue:      #2563eb;
     --font-sans: system-ui, -apple-system, sans-serif;
     --font-mono: "Fira Code", "SF Mono", monospace;
   }
@@ -32,7 +35,10 @@
 
   /* ── header ── */
   header {
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border-md);
+    background: rgba(250,250,248,0.92);
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(10px);
     padding: 48px 0 40px;
     margin-bottom: 56px;
   }
@@ -59,22 +65,22 @@
   .score-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 16px;
+    gap: 14px;
     margin-bottom: 56px;
   }
   .score-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: #fff;
+    border: 1px solid var(--border-md);
     border-radius: 6px;
-    padding: 20px 22px;
+    padding: 18px 20px;
   }
   .score-card.solved-card {
-    border-color: rgba(34,197,94,0.3);
-    background: rgba(34,197,94,0.05);
+    border-color: #bbf7d0;
+    background: #f0fdf4;
   }
   .score-card .label {
     font-family: var(--font-mono);
-    font-size: 0.625rem;
+    font-size: 0.5625rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--subtle);
@@ -107,7 +113,7 @@
     letter-spacing: -0.015em;
     margin-bottom: 20px;
     padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border-md);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -119,7 +125,7 @@
     text-transform: uppercase;
     padding: 2px 8px;
     border-radius: 2px;
-    background: var(--surface);
+    background: var(--surface2);
     color: var(--subtle);
   }
   section.group { margin-bottom: 48px; }
@@ -127,8 +133,8 @@
   /* ── finding cards ── */
   .findings { display: flex; flex-direction: column; gap: 12px; }
   .finding {
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: #fff;
+    border: 1px solid var(--border-md);
     border-radius: 6px;
     padding: 18px 20px;
     display: grid;
@@ -138,10 +144,11 @@
     transition: opacity 0.2s;
   }
   .finding.solved {
-    opacity: 0.55;
-    border-color: rgba(34,197,94,0.2);
+    opacity: 0.6;
+    background: #f0fdf4;
+    border-color: #bbf7d0;
   }
-  .finding.solved:hover { opacity: 0.8; }
+  .finding.solved:hover { opacity: 1; }
 
   .badges { display: flex; flex-direction: column; gap: 5px; }
 
@@ -156,11 +163,11 @@
     margin-top: 0;
     display: inline-block;
   }
-  .badge.critical { background: rgba(239,68,68,0.15);  color: var(--red);    border: 1px solid rgba(239,68,68,0.3); }
-  .badge.warning  { background: rgba(234,179,8,0.12);  color: var(--yellow); border: 1px solid rgba(234,179,8,0.3); }
-  .badge.info     { background: rgba(96,165,250,0.10); color: var(--blue);   border: 1px solid rgba(96,165,250,0.3); }
-  .badge.pass     { background: rgba(34,197,94,0.10);  color: var(--green);  border: 1px solid rgba(34,197,94,0.3); }
-  .badge.solved   { background: rgba(34,197,94,0.15);  color: var(--green);  border: 1px solid rgba(34,197,94,0.4); }
+  .badge.critical { background: #fee2e2; color: var(--red);    border: 1px solid #fca5a5; }
+  .badge.warning  { background: #fef9c3; color: var(--yellow); border: 1px solid #fde047; }
+  .badge.info     { background: #dbeafe; color: var(--blue);   border: 1px solid #93c5fd; }
+  .badge.pass     { background: #dcfce7; color: var(--green);  border: 1px solid #86efac; }
+  .badge.solved   { background: #dcfce7; color: var(--green);  border: 1px solid #86efac; }
 
   .finding-body h3 {
     font-size: 0.9375rem;
@@ -171,7 +178,7 @@
   }
   .finding.solved .finding-body h3 {
     text-decoration: line-through;
-    text-decoration-color: rgba(34,197,94,0.5);
+    text-decoration-color: #86efac;
     color: var(--muted);
   }
   .finding-body p {
@@ -181,15 +188,23 @@
     margin-bottom: 10px;
   }
   .finding-body p:last-child { margin-bottom: 0; }
+  .finding-body code {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    background: var(--surface2);
+    border: 1px solid var(--border-md);
+    border-radius: 3px;
+    padding: 1px 5px;
+    color: var(--accent);
+  }
 
   .loc {
     font-family: var(--font-mono);
     font-size: 0.75rem;
-    color: var(--subtle);
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 8px 12px;
+    color: #c9c3ba;
+    background: #1a1917;
+    border-radius: 4px;
+    padding: 10px 14px;
     margin-top: 8px;
     white-space: pre;
     overflow-x: auto;
@@ -207,11 +222,11 @@
     gap: 6px;
     font-size: 0.75rem;
     font-family: var(--font-mono);
-    color: var(--green);
+    color: #15803d;
     margin-top: 10px;
-    padding: 4px 10px;
-    background: rgba(34,197,94,0.08);
-    border: 1px solid rgba(34,197,94,0.2);
+    padding: 6px 10px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
     border-radius: 3px;
   }
   .solved-note::before { content: "✓"; font-weight: 700; }
@@ -223,8 +238,8 @@
     gap: 12px;
     align-items: baseline;
     padding: 14px 18px;
-    background: rgba(34,197,94,0.04);
-    border: 1px solid rgba(34,197,94,0.15);
+    background: #fff;
+    border: 1px solid var(--border-md);
     border-radius: 6px;
     font-size: 0.875rem;
     color: var(--muted);
@@ -236,7 +251,7 @@
     flex-shrink: 0;
   }
 
-  /* ── summary table ── */
+  /* ── priority list ── */
   .priority-list { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
   .priority-item {
     display: grid;
@@ -244,17 +259,20 @@
     align-items: center;
     gap: 10px;
     padding: 10px 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: #fff;
+    border: 1px solid var(--border-md);
     border-radius: 4px;
     font-size: 0.8125rem;
+    color: var(--muted);
     transition: opacity 0.2s;
   }
   .priority-item.done {
-    opacity: 0.45;
-    border-color: rgba(34,197,94,0.2);
+    opacity: 0.5;
+    background: #f0fdf4;
+    border-color: #bbf7d0;
     text-decoration: line-through;
-    text-decoration-color: rgba(34,197,94,0.4);
+    text-decoration-color: #86efac;
+    color: var(--muted);
   }
   .priority-item .n {
     font-family: var(--font-mono);
@@ -272,6 +290,7 @@
   .priority-item.done .effort::after {
     content: " · done";
     color: var(--green);
+    text-decoration: none;
   }
 </style>
 </head>

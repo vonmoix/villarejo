@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 
 const certs = [
   { name: "Lean IT Foundation & Lean IT Kaizen", issuer: "Lean IT Association", year: "2017" },
@@ -11,15 +11,16 @@ const certs = [
 ];
 
 function CertRow({ cert, index }: { cert: (typeof certs)[0]; index: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-32px 0px" });
+  const ref          = useRef<HTMLDivElement>(null);
+  const inView       = useInView(ref, { once: true, margin: "-32px 0px" });
+  const shouldReduce = useReducedMotion();
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 10 }}
+      initial={shouldReduce ? false : { opacity: 0, y: 10 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.45, delay: index * 0.07 }}
+      transition={shouldReduce ? { duration: 0 } : { duration: 0.45, delay: index * 0.07 }}
       className={`flex items-baseline justify-between gap-5 py-4
         ${index === 0 ? "border-t border-[var(--border-subtle)]" : ""}
         border-b border-[var(--border-subtle)]`}
@@ -43,7 +44,7 @@ export function Certifications() {
           Credentials
         </p>
         <h2
-          className="font-display font-bold text-ink tracking-[-0.027em] leading-[1.07] mb-12"
+          className="font-display font-bold text-ink tracking-[-0.027em] leading-[1.07] mb-14"
           style={{ fontSize: "clamp(1.875rem, 4vw, 3rem)" }}
         >
           Professional Credentials

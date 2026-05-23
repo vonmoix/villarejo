@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 
 const degrees = [
   {
@@ -23,15 +23,16 @@ const degrees = [
 ];
 
 function EduEntry({ edu, index }: { edu: (typeof degrees)[0]; index: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-40px 0px" });
+  const ref          = useRef<HTMLDivElement>(null);
+  const inView       = useInView(ref, { once: true, margin: "-40px 0px" });
+  const shouldReduce = useReducedMotion();
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 14 }}
+      initial={shouldReduce ? false : { opacity: 0, y: 14 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+      transition={shouldReduce ? { duration: 0 } : { duration: 0.5, delay: index * 0.1 }}
       className={`py-10 ${index === 0 ? "border-t border-[var(--border-subtle)]" : ""} border-b border-[var(--border-subtle)]`}
     >
       <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.04em] mb-4">
@@ -64,7 +65,7 @@ export function Education() {
           Education
         </p>
         <h2
-          className="font-display font-bold text-ink tracking-[-0.027em] leading-[1.07] mb-10"
+          className="font-display font-bold text-ink tracking-[-0.027em] leading-[1.07] mb-14"
           style={{ fontSize: "clamp(1.875rem, 4vw, 3rem)" }}
         >
           Academic Background

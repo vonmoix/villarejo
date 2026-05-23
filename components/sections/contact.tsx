@@ -1,21 +1,22 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
 export function Contact() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px 0px" });
+  const ref          = useRef<HTMLDivElement>(null);
+  const inView       = useInView(ref, { once: true, margin: "-60px 0px" });
+  const shouldReduce = useReducedMotion();
 
   return (
     <section id="contact" className="py-28 md:py-36 bg-surface">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
         <motion.div
           ref={ref}
-          initial={{ opacity: 0, y: 16 }}
+          initial={shouldReduce ? false : { opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.55 }}
+          transition={shouldReduce ? { duration: 0 } : { duration: 0.55 }}
         >
           <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.12em] uppercase mb-3">
             Get in Touch
@@ -26,7 +27,7 @@ export function Contact() {
           >
             Let&apos;s Connect
           </h2>
-          <p className="text-muted text-base max-w-[48ch] mb-8">
+          <p className="text-muted text-base max-w-[48ch] mb-16">
             Available for consultation and collaboration. I typically respond
             within 24 hours.
           </p>
@@ -42,13 +43,14 @@ export function Contact() {
 
           <div className="flex gap-4 flex-wrap">
             <Button asChild>
-              <a href="mailto:mjvillarejo@gmail.com">Email Directly</a>
+              <a href="mailto:mjvillarejo@gmail.com">Send Email</a>
             </Button>
             <Button variant="outline" asChild>
               <a
                 href="https://linkedin.com/in/mvillarejo"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="LinkedIn profile (opens in new tab)"
               >
                 LinkedIn ↗
               </a>

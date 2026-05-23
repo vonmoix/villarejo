@@ -13,7 +13,7 @@
   --accent-hi:      oklch(0.801 0.155 74);
   --text:           oklch(0.958 0.013 72);
   --text-muted:     oklch(0.631 0.009 60);
-  --text-subtle:    oklch(0.425 0.010 60);
+  --text-subtle:    oklch(0.49 0.010 60);
 
   color-scheme: dark;
 }

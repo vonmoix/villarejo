@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 
 const jobs = [
   {
@@ -113,18 +113,19 @@ function JobCard({
   inView: boolean;
   isActive: boolean;
 }) {
-  const isRight = align === "right";
+  const isRight      = align === "right";
+  const shouldReduce = useReducedMotion();
   return (
     /* entrance wrapper */
     <motion.div
-      initial={{ opacity: 0, x: dx }}
+      initial={shouldReduce ? false : { opacity: 0, x: dx }}
       animate={inView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.5, delay }}
+      transition={shouldReduce ? { duration: 0 } : { duration: 0.5, delay }}
     >
       {/* scale wrapper — reacts to isActive independently */}
       <motion.div
         animate={{ scale: isActive ? 1.05 : 1 }}
-        transition={{ type: "spring", stiffness: 220, damping: 22 }}
+        transition={shouldReduce ? { duration: 0 } : { type: "spring", stiffness: 220, damping: 22 }}
         style={{ transformOrigin: isRight ? "right center" : "left center" }}
         className={isRight ? "text-right" : "text-left"}
       >
@@ -177,11 +178,11 @@ function TimelineItem({
   return (
     <div
       ref={setRef}
-      className="grid items-start pb-14 last:pb-0"
-      style={{ gridTemplateColumns: "1fr 44px 1fr" }}
+      className="grid items-start pb-14 last:pb-0
+                 grid-cols-[20px_1fr] md:grid-cols-[1fr_44px_1fr]"
     >
-      {/* LEFT slot */}
-      <div className="pr-6 min-w-0">
+      {/* LEFT slot — desktop only */}
+      <div className="hidden md:block pr-6 min-w-0">
         {isLeft && (
           <JobCard
             job={job}
@@ -199,8 +200,8 @@ function TimelineItem({
         <motion.div
           animate={
             isActive
-              ? { scale: 1, backgroundColor: "#F59E0B", borderColor: "#F59E0B" }
-              : { scale: 0.85, backgroundColor: "transparent", borderColor: "#5c5651" }
+              ? { scale: 1, backgroundColor: "var(--accent)", borderColor: "var(--accent)" }
+              : { scale: 0.85, backgroundColor: "transparent", borderColor: "var(--text-subtle)" }
           }
           transition={{ type: "spring", stiffness: 260, damping: 24 }}
           className="relative z-10 rounded-full border-[1.5px] w-[9px] h-[9px]"
@@ -212,18 +213,32 @@ function TimelineItem({
         />
       </div>
 
-      {/* RIGHT slot */}
-      <div className="pl-6 min-w-0">
-        {!isLeft && (
+      {/* RIGHT slot — mobile: always visible; desktop: odd items only */}
+      <div className="pl-4 md:pl-6 min-w-0">
+        {/* mobile: render all items left-aligned */}
+        <div className="md:hidden">
           <JobCard
             job={job}
             align="left"
-            dx={18}
+            dx={12}
             delay={index * 0.05}
             inView={inView}
             isActive={isActive}
           />
-        )}
+        </div>
+        {/* desktop: only right-column (odd) items */}
+        <div className="hidden md:block">
+          {!isLeft && (
+            <JobCard
+              job={job}
+              align="left"
+              dx={18}
+              delay={index * 0.05}
+              inView={inView}
+              isActive={isActive}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
@@ -273,11 +288,11 @@ export function Experience() {
         </p>
 
         <div className="relative">
-          {/* Central vertical gradient line */}
+          {/* Central vertical gradient line — left-aligned on mobile, centered on desktop */}
           <div
-            className="absolute top-2 bottom-10 w-px pointer-events-none"
+            className="absolute top-2 bottom-10 w-px pointer-events-none
+                        left-[10px] md:left-[calc(50%-0.5px)]"
             style={{
-              left: "calc(50% - 0.5px)",
               background:
                 "linear-gradient(to bottom, rgba(245,158,11,0.65) 0%, rgba(245,158,11,0.08) 100%)",
             }}

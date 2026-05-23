@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { siAmazonaws, siMicrosoftazure, siMicrosoftoffice } from "simple-icons";
 import Image from "next/image";
 
@@ -72,8 +72,9 @@ function Logo({ tech }: { tech: Tech }) {
 }
 
 export function TechStack() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px 0px" });
+  const ref          = useRef<HTMLDivElement>(null);
+  const inView       = useInView(ref, { once: true, margin: "-60px 0px" });
+  const shouldReduce = useReducedMotion();
 
   return (
     <section id="tech" className="py-16 md:py-20 border-t border-[var(--border-subtle)]">
@@ -87,7 +88,7 @@ export function TechStack() {
         >
           Technologies
         </h2>
-        <p className="text-muted text-base max-w-[54ch] mb-14">
+        <p className="text-muted text-base max-w-[54ch] mb-16">
           Platforms and tools at the core of my work.
         </p>
 
@@ -98,9 +99,9 @@ export function TechStack() {
           {technologies.map((tech, i) => (
             <motion.div
               key={tech.name}
-              initial={{ opacity: 0, y: 14 }}
+              initial={shouldReduce ? false : { opacity: 0, y: 14 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.4, delay: i * 0.045 }}
+              transition={shouldReduce ? { duration: 0 } : { duration: 0.4, delay: i * 0.045 }}
               className="group flex flex-col items-center gap-3 cursor-default"
             >
               <div className="w-9 h-9 flex items-center justify-center opacity-60 group-hover:opacity-100 transition-opacity duration-200">

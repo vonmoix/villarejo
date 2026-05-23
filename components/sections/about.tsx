@@ -7,8 +7,7 @@ export function About() {
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
 
         {/* Landscape image */}
-        <div className="relative w-full overflow-hidden rounded-xl mb-16"
-             style={{ aspectRatio: "21 / 8" }}>
+        <div className="relative w-full overflow-hidden rounded-xl mb-16 aspect-[16/9] md:aspect-[21/8]">
           <Image
             src={landscapeImg}
             alt="Rolling green hills and forest landscape"
