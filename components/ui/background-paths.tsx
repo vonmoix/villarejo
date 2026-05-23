@@ -20,6 +20,7 @@ function FloatingPaths({ position }: { position: number }) {
     <div className="absolute inset-0 pointer-events-none">
       <svg className="w-full h-full" viewBox="0 0 696 316" fill="none">
         <title>Decorative background paths</title>
+        <g transform="translate(0, -90)">
         {paths.map((path) => (
           <motion.path
             key={path.id}
@@ -41,6 +42,7 @@ function FloatingPaths({ position }: { position: number }) {
             }}
           />
         ))}
+        </g>
       </svg>
     </div>
   );
@@ -80,7 +82,7 @@ export function HeroPaths({
     ));
 
   return (
-    <div className="relative min-h-svh w-full flex flex-col justify-end overflow-hidden bg-bg pb-24 md:pb-32">
+    <div className="relative min-h-svh w-full flex flex-col justify-center overflow-hidden bg-bg pt-24 pb-16 md:pt-28 md:pb-20">
       {/* grain */}
       <div
         className="pointer-events-none fixed inset-0 z-50 opacity-[0.032]"
@@ -147,17 +149,37 @@ export function HeroPaths({
         )}
       </div>
 
-      {/* scroll whisper */}
-      <motion.span
+      {/* scroll indicator — magic mouse oval */}
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.5 }}
-        className="absolute bottom-10 left-6 md:left-8 hidden sm:flex items-center gap-3
-                   font-mono text-[0.6875rem] tracking-[0.06em] uppercase text-subtle"
+        transition={{ delay: 1.4, duration: 0.6 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2"
       >
-        <span className="block w-7 h-px bg-subtle" />
-        scroll
-      </motion.span>
+        {/* oval outline */}
+        <div
+          className="relative flex justify-center overflow-hidden"
+          style={{
+            width: 24,
+            height: 38,
+            borderRadius: 12,
+            border: "1.5px solid rgba(92,86,81,0.6)",
+          }}
+        >
+          {/* animated amber dot */}
+          <motion.div
+            className="absolute rounded-full bg-accent"
+            style={{ width: 5, height: 5, top: 6 }}
+            animate={{ y: [0, 16, 0] }}
+            transition={{
+              duration: 1.6,
+              repeat: Infinity,
+              ease: [0.45, 0, 0.55, 1],
+              repeatDelay: 0.3,
+            }}
+          />
+        </div>
+      </motion.div>
     </div>
   );
 }
