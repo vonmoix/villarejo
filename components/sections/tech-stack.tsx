@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { siAmazonaws, siMicrosoftazure, siMicrosoftoffice } from "simple-icons";
 
@@ -32,6 +32,8 @@ const technologies: Tech[] = [
 ];
 
 function Logo({ tech }: { tech: Tech }) {
+  const [failed, setFailed] = useState(false);
+
   if (tech.path) {
     return (
       <svg
@@ -39,12 +41,22 @@ function Logo({ tech }: { tech: Tech }) {
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full"
-        fill={AMBER}
+        style={{ color: "var(--accent)" }}
+        fill="currentColor"
       >
         <path d={tech.path} />
       </svg>
     );
   }
+
+  if (failed) {
+    return (
+      <span className="font-mono text-[0.5rem] tracking-[0.06em] uppercase text-accent text-center leading-tight px-1">
+        {tech.name}
+      </span>
+    );
+  }
+
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
@@ -52,6 +64,7 @@ function Logo({ tech }: { tech: Tech }) {
       alt={tech.name}
       width={36}
       height={36}
+      onError={() => setFailed(true)}
       className="w-full h-full object-contain"
     />
   );
@@ -62,7 +75,7 @@ export function TechStack() {
   const inView = useInView(ref, { once: true, margin: "-60px 0px" });
 
   return (
-    <section className="py-24 md:py-28 border-t border-[var(--border-subtle)]">
+    <section id="tech" className="py-16 md:py-20 border-t border-[var(--border-subtle)]">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
         <p className="font-mono text-[0.6875rem] text-accent tracking-[0.12em] uppercase mb-3">
           Tech Stack

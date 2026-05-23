@@ -4,14 +4,15 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "#skills",     label: "Skills" },
   { href: "#experience", label: "Experience" },
-  { href: "#contact",    label: "Contact" },
+  { href: "#education",  label: "Education"  },
+  { href: "#skills",     label: "Skills"     },
+  { href: "#about",      label: "About"      },
 ];
 
 export function Nav() {
   const [stuck, setStuck] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen]   = useState(false);
 
   useEffect(() => {
     const onScroll = () => setStuck(window.scrollY > 48);
@@ -63,30 +64,15 @@ export function Nav() {
           aria-label="Toggle navigation"
           aria-expanded={open}
         >
-          <span
-            className={cn(
-              "block w-5 h-[1.5px] bg-muted transition-transform duration-200",
-              open && "translate-y-[6.5px] rotate-45"
-            )}
-          />
-          <span
-            className={cn(
-              "block w-5 h-[1.5px] bg-muted transition-opacity duration-200",
-              open && "opacity-0"
-            )}
-          />
-          <span
-            className={cn(
-              "block w-5 h-[1.5px] bg-muted transition-transform duration-200",
-              open && "-translate-y-[6.5px] -rotate-45"
-            )}
-          />
+          <span className={cn("block w-5 h-[1.5px] bg-muted transition-transform duration-200", open && "translate-y-[6.5px] rotate-45")} />
+          <span className={cn("block w-5 h-[1.5px] bg-muted transition-opacity duration-200",  open && "opacity-0")} />
+          <span className={cn("block w-5 h-[1.5px] bg-muted transition-transform duration-200", open && "-translate-y-[6.5px] -rotate-45")} />
         </button>
       </div>
 
-      {/* mobile menu */}
+      {/* mobile menu — animated with framer-motion */}
       {open && (
-        <div className="fixed inset-0 bg-bg z-[505] flex flex-col items-center justify-center gap-12">
+        <div className="fixed inset-0 bg-bg z-[505] flex flex-col items-center justify-center gap-10">
           {[...links, { href: "#contact", label: "Get in touch" }].map(({ href, label }) => (
             <a
               key={`${href}-${label}`}

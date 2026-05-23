@@ -37,7 +37,7 @@ function CertRow({ cert, index }: { cert: (typeof certs)[0]; index: number }) {
 
 export function Certifications() {
   return (
-    <section id="certifications" className="py-24 md:py-32 bg-surface">
+    <section id="certifications" className="py-16 md:py-24 bg-surface">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
         <p className="font-mono text-[0.6875rem] text-accent tracking-[0.12em] uppercase mb-3">
           Credentials

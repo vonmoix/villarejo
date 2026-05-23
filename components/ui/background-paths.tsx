@@ -1,8 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 
-function FloatingPaths({ position }: { position: number }) {
+function FloatingPaths({ position, active }: { position: number; active: boolean }) {
+  const shouldReduce = useReducedMotion();
+  const isAnimating   = active && !shouldReduce;
+
   const paths = Array.from({ length: 48 }, (_, i) => ({
     id: i,
     d: `M-${380 - i * 5 * position} -${189 + i * 6}C-${
@@ -29,17 +33,25 @@ function FloatingPaths({ position }: { position: number }) {
             strokeWidth={path.width}
             strokeOpacity={path.opacity}
             initial={{ pathLength: 0.3, opacity: 0 }}
-            animate={{
-              pathLength: 1,
-              opacity: [path.opacity * 0.6, path.opacity * 1.5, path.opacity * 0.6],
-              pathOffset: [0, 1, 0],
-            }}
-            transition={{
-              duration: 22 + path.id * 0.4,
-              repeat: Infinity,
-              ease: "linear",
-              delay: path.id * 0.15,
-            }}
+            animate={
+              isAnimating
+                ? {
+                    pathLength: 1,
+                    opacity: [path.opacity * 0.6, path.opacity * 1.5, path.opacity * 0.6],
+                    pathOffset: [0, 1, 0],
+                  }
+                : { pathLength: 0.3, opacity: path.opacity * 0.6, pathOffset: 0 }
+            }
+            transition={
+              isAnimating
+                ? {
+                    duration: 22 + path.id * 0.4,
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: path.id * 0.15,
+                  }
+                : { duration: 1.2, ease: "easeOut" }
+            }
           />
         ))}
         </g>
@@ -63,6 +75,9 @@ export function HeroPaths({
   subtitle,
   children,
 }: HeroPathsProps) {
+  const sectionRef  = useRef<HTMLDivElement>(null);
+  const heroInView  = useInView(sectionRef, { once: false });
+
   const renderWord = (word: string, baseDelay: number) =>
     word.split("").map((letter, i) => (
       <motion.span
@@ -82,7 +97,7 @@ export function HeroPaths({
     ));
 
   return (
-    <div className="relative min-h-svh w-full flex flex-col justify-center overflow-hidden bg-bg pt-24 pb-16 md:pt-28 md:pb-20">
+    <div ref={sectionRef} className="relative min-h-svh w-full flex flex-col justify-center overflow-hidden bg-bg pt-24 pb-16 md:pt-28 md:pb-20">
       {/* grain */}
       <div
         className="pointer-events-none fixed inset-0 z-50 opacity-[0.032]"
@@ -92,10 +107,10 @@ export function HeroPaths({
         }}
       />
 
-      {/* animated paths */}
+      {/* animated paths — paused when hero is out of viewport to save GPU */}
       <div className="absolute inset-0">
-        <FloatingPaths position={1} />
-        <FloatingPaths position={-1} />
+        <FloatingPaths position={1} active={heroInView} />
+        <FloatingPaths position={-1} active={heroInView} />
       </div>
 
       {/* content */}

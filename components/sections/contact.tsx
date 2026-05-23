@@ -9,14 +9,13 @@ export function Contact() {
   const inView = useInView(ref, { once: true, margin: "-60px 0px" });
 
   return (
-    <section id="contact" className="py-24 md:py-32 bg-surface">
+    <section id="contact" className="py-28 md:py-36 bg-surface">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.55 }}
-          className="max-w-[600px] mx-auto text-center"
         >
           <p className="font-mono text-[0.6875rem] text-accent tracking-[0.12em] uppercase mb-3">
             Get in Touch
@@ -27,21 +26,21 @@ export function Contact() {
           >
             Let&apos;s Connect
           </h2>
-          <p className="text-muted text-base max-w-[48ch] mx-auto mb-6">
+          <p className="text-muted text-base max-w-[48ch] mb-8">
             Available for consultation and collaboration. I typically respond
             within 24 hours.
           </p>
 
           <a
             href="mailto:mjvillarejo@gmail.com"
-            className="group inline-block font-display font-semibold text-ink tracking-[-0.02em] mb-8 relative"
+            className="group inline-block font-display font-semibold text-ink tracking-[-0.02em] mb-10 relative"
             style={{ fontSize: "clamp(1.125rem, 3vw, 1.75rem)" }}
           >
             mjvillarejo@gmail.com
             <span className="absolute bottom-[-2px] left-0 h-px bg-accent w-0 group-hover:w-full transition-all duration-[350ms]" />
           </a>
 
-          <div className="flex gap-4 justify-center flex-wrap">
+          <div className="flex gap-4 flex-wrap">
             <Button asChild>
               <a href="mailto:mjvillarejo@gmail.com">Email Directly</a>
             </Button>

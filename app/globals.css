@@ -3,22 +3,24 @@
 @tailwind utilities;
 
 :root {
-  --bg:             #111009;
-  --surface:        #1a1815;
-  --surface-2:      #211f1c;
-  --border:         #2a2720;
-  --border-subtle:  #221f1c;
-  --accent:         #f59e0b;
-  --accent-hi:      #fbbf24;
-  --text:           #f5f0e8;
-  --text-muted:     #9c9590;
-  --text-subtle:    #5c5651;
+  /* Warm Precision — palette in OKLCH for perceptual uniformity */
+  --bg:             oklch(0.115 0.011 65);
+  --surface:        oklch(0.158 0.009 62);
+  --surface-2:      oklch(0.188 0.009 60);
+  --border:         oklch(0.221 0.010 62);
+  --border-subtle:  oklch(0.188 0.008 60);
+  --accent:         oklch(0.717 0.168 55);
+  --accent-hi:      oklch(0.801 0.155 74);
+  --text:           oklch(0.958 0.013 72);
+  --text-muted:     oklch(0.631 0.009 60);
+  --text-subtle:    oklch(0.425 0.010 60);
 
   color-scheme: dark;
 }
 
-html {
-  scroll-behavior: smooth;
+/* Smooth scrolling only when user hasn't opted out */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
 }
 
 body {
@@ -26,4 +28,24 @@ body {
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Keyboard focus — visible ring in accent colour */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Respect prefers-reduced-motion — kill all motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

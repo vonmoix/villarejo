@@ -257,7 +257,7 @@ export function Experience() {
   }, []);
 
   return (
-    <section id="experience" className="py-24 md:py-32">
+    <section id="experience" className="py-28 md:py-40">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
         <p className="font-mono text-[0.6875rem] text-accent tracking-[0.12em] uppercase mb-3">
           Career
