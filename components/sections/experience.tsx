@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useInView } from "framer-motion";
 
 const jobs = [
@@ -158,18 +158,25 @@ function TimelineItem({
   job,
   index,
   isActive,
+  onRef,
 }: {
   job: Job;
   index: number;
   isActive: boolean;
+  onRef: (el: HTMLDivElement | null) => void;
 }) {
-  const ref    = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-40px 0px" });
-  const isLeft = index % 2 === 0;
+  const localRef = useRef<HTMLDivElement>(null);
+  const inView   = useInView(localRef, { once: true, margin: "-40px 0px" });
+  const isLeft   = index % 2 === 0;
+
+  const setRef = useCallback((el: HTMLDivElement | null) => {
+    (localRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+    onRef(el);
+  }, [onRef]);
 
   return (
     <div
-      ref={ref}
+      ref={setRef}
       className="grid items-start pb-14 last:pb-0"
       style={{ gridTemplateColumns: "1fr 44px 1fr" }}
     >
