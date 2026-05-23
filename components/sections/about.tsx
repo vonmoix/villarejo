@@ -1,7 +1,28 @@
+import Image from "next/image";
+import landscapeImg from "@/images/land.jpg";
+
 export function About() {
   return (
     <section id="about" className="py-24 md:py-32">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
+
+        {/* Landscape image */}
+        <div className="relative w-full overflow-hidden rounded-xl mb-16"
+             style={{ aspectRatio: "21 / 8" }}>
+          <Image
+            src={landscapeImg}
+            alt="Rolling green hills and forest landscape"
+            fill
+            className="object-cover object-center"
+            sizes="(max-width: 768px) 100vw, 1100px"
+            priority
+          />
+          {/* subtle dark vignette at bottom to blend into page */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-bg/70" />
+          {/* faint green tint to reinforce the palette */}
+          <div className="absolute inset-0 bg-emerald-900/10 mix-blend-multiply" />
+        </div>
+
         <div className="grid gap-16 md:gap-24 md:grid-cols-2">
           {/* languages */}
           <div>

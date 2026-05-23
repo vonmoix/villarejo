@@ -143,7 +143,7 @@ function JobCard({
                 className={`flex gap-3 text-[0.9375rem] text-muted leading-relaxed max-w-[52ch]
                   ${isRight ? "flex-row-reverse" : ""}`}
               >
-                <span className="text-subtle flex-shrink-0">—</span>
+                <span className="text-accent flex-shrink-0">·</span>
                 {b}
               </li>
             ))}
