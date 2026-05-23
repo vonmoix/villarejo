@@ -110,13 +110,13 @@ export function Skills() {
     <section id="skills" className="py-24 md:py-32">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
         <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.12em] uppercase mb-3">
-          Competencies
+          Expertise Areas
         </p>
         <h2
           className="font-display font-bold text-ink tracking-[-0.027em] leading-[1.07] mb-3"
           style={{ fontSize: "clamp(1.875rem, 4vw, 3rem)" }}
         >
-          Core Competencies
+          Enterprise Capabilities
         </h2>
         <p className="text-muted text-base max-w-[54ch] mb-16">
           The domains where I create the most impact.
