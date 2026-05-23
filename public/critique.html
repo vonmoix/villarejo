@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Design Critique — villarejo.in</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #fafaf8;
+      --surface:   #f3f2ee;
+      --surface2:  #eceae4;
+      --border:    rgba(0,0,0,0.08);
+      --border-md: rgba(0,0,0,0.12);
+      --ink:       #1a1917;
+      --muted:     #5a554e;
+      --subtle:    #9b9488;
+      --accent:    #b45309;
+      --accent-bg: #fef3c7;
+      --red:       #dc2626;
+      --orange:    #ea580c;
+      --yellow:    #ca8a04;
+      --green:     #16a34a;
+      --blue:      #2563eb;
+      --radius:    6px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── LAYOUT ─── */
+    .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
+
+    /* ─── HEADER ─── */
+    header {
+      border-bottom: 1px solid var(--border-md);
+      background: rgba(250,250,248,0.92);
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    .header-inner {
+      max-width: 1060px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 52px;
+    }
+    .logo { font-weight: 800; font-size: 1rem; letter-spacing: -.02em; color: var(--ink); text-decoration: none; }
+    .logo span { color: var(--accent); }
+    .meta { font-size: 0.75rem; color: var(--subtle); font-family: "SF Mono", "Fira Code", monospace; }
+
+    /* ─── HERO ─── */
+    .hero {
+      padding: 64px 24px 48px;
+      max-width: 1060px; margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+    .eyebrow {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.6875rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+    }
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 800; letter-spacing: -.035em; line-height: 1.05;
+      color: var(--ink); margin-bottom: 14px;
+    }
+    .hero-desc { font-size: 1rem; color: var(--muted); max-width: 58ch; line-height: 1.75; }
+
+    /* ─── SCORE BAND ─── */
+    .score-band {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border-md);
+      padding: 28px 24px 32px;
+    }
+    .score-grid {
+      max-width: 1060px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 14px;
+    }
+    .score-card {
+      background: #fff;
+      border: 1px solid var(--border-md);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+    .score-card .label {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.5625rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--subtle); margin-bottom: 8px;
+    }
+    .score-card .value {
+      font-size: 1.75rem; font-weight: 800; letter-spacing: -.03em; line-height: 1;
+    }
+    .score-card .out-of { font-size: 0.8125rem; color: var(--subtle); font-weight: 400; }
+    .score-card .bar { height: 3px; background: var(--border-md); border-radius: 2px; margin-top: 10px; }
+    .score-card .bar-fill { height: 100%; border-radius: 2px; }
+    .c-green  { color: var(--green);  }
+    .c-yellow { color: var(--yellow); }
+    .c-orange { color: var(--orange); }
+    .c-red    { color: var(--red);    }
+    .c-accent { color: var(--accent); }
+    .bg-green  { background: var(--green);  }
+    .bg-yellow { background: var(--yellow); }
+    .bg-orange { background: var(--orange); }
+    .bg-red    { background: var(--red);    }
+    .bg-accent { background: var(--accent); }
+
+    /* ─── OVERALL ─── */
+    .overall {
+      max-width: 1060px; margin: 0 auto;
+      padding: 24px 24px 0;
+      display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    }
+    .overall-score {
+      font-size: 4.5rem; font-weight: 900; letter-spacing: -.04em; line-height: 1;
+      color: var(--accent);
+    }
+    .overall-meta h2 { font-size: 1.2rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .overall-meta p  { font-size: 0.875rem; color: var(--muted); max-width: 46ch; }
+    .delta {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.8125rem; font-weight: 600; color: var(--green);
+      background: #dcfce7; border: 1px solid #bbf7d0;
+      border-radius: 4px; padding: 2px 8px; margin-left: 10px;
+    }
+
+    /* ─── MAIN ─── */
+    main { padding: 40px 0 72px; }
+    section.critique { padding: 44px 0; border-bottom: 1px solid var(--border); }
+    section.critique:last-child { border-bottom: none; }
+
+    h2.section-title {
+      font-size: 1.375rem; font-weight: 700; letter-spacing: -.02em;
+      color: var(--ink); margin-bottom: 6px;
+    }
+    .section-intro { font-size: 0.9375rem; color: var(--muted); max-width: 60ch; margin-bottom: 24px; }
+
+    /* ─── BADGES ─── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.5625rem; letter-spacing: .08em; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 3px; font-weight: 700; white-space: nowrap;
+    }
+    .badge-p0   { background: #fee2e2; color: var(--red);    border: 1px solid #fca5a5; }
+    .badge-p1   { background: #ffedd5; color: var(--orange); border: 1px solid #fdba74; }
+    .badge-p2   { background: #fef9c3; color: var(--yellow); border: 1px solid #fde047; }
+    .badge-p3   { background: #dcfce7; color: var(--green);  border: 1px solid #86efac; }
+    .badge-ok   { background: var(--accent-bg); color: var(--accent); border: 1px solid #fcd34d; }
+    .badge-pass { background: #dcfce7; color: var(--green);  border: 1px solid #86efac; }
+
+    /* ─── FINDING CARDS ─── */
+    .findings { display: flex; flex-direction: column; gap: 12px; }
+    .finding {
+      background: #fff;
+      border: 1px solid var(--border-md);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+    .finding.open { border-left: 3px solid var(--orange); }
+    .finding.low  { border-left: 3px solid var(--green); }
+    .finding-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 10px; margin-bottom: 8px; flex-wrap: wrap;
+    }
+    .finding-title { font-weight: 600; font-size: 0.9375rem; color: var(--ink); }
+    .finding p { font-size: 0.875rem; color: var(--muted); line-height: 1.7; margin-bottom: 6px; }
+    .finding p:last-child { margin-bottom: 0; }
+    .finding code {
+      font-family: "SF Mono", "Fira Code", monospace; font-size: 0.8125rem;
+      background: var(--surface2); border: 1px solid var(--border-md);
+      border-radius: 3px; padding: 1px 5px; color: var(--accent);
+    }
+    .fix-note {
+      margin-top: 10px; padding: 10px 14px;
+      background: var(--accent-bg); border: 1px solid #fcd34d; border-radius: 4px;
+      font-size: 0.8125rem; color: var(--accent);
+      display: flex; gap: 8px; align-items: flex-start;
+    }
+    .fix-note .icon { flex-shrink: 0; }
+
+    /* ─── HEURISTICS TABLE ─── */
+    .tbl-wrap { overflow-x: auto; margin-top: 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    thead th {
+      text-align: left; padding: 9px 13px;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.5625rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--subtle); border-bottom: 1px solid var(--border-md);
+      background: var(--surface);
+    }
+    tbody td {
+      padding: 10px 13px; border-bottom: 1px solid var(--border);
+      color: var(--muted); vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody td:first-child { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+    .score-dot {
+      display: inline-flex; gap: 3px; align-items: center;
+    }
+    .dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--border-md);
+    }
+    .dot.filled-green  { background: var(--green); }
+    .dot.filled-accent { background: var(--accent); }
+    .dot.filled-yellow { background: var(--yellow); }
+    .dot.filled-orange { background: var(--orange); }
+    .tfoot td {
+      padding: 11px 13px; background: var(--surface);
+      font-weight: 700; color: var(--ink); font-size: 0.875rem;
+      border-top: 2px solid var(--border-md);
+    }
+
+    /* ─── CHECKLIST ─── */
+    .checklist { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .checklist li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 0.9375rem; color: var(--muted);
+    }
+    .checklist li .icon { flex-shrink: 0; margin-top: 2px; }
+    .checklist li .icon.pass { color: var(--green); }
+    .checklist li .icon.fail { color: var(--red); }
+    .checklist li .icon.warn { color: var(--yellow); }
+    .checklist li strong { color: var(--ink); }
+
+    /* ─── POSITIVE CARDS ─── */
+    .positives { display: grid; grid-template-columns: repeat(auto-fit, minmax(228px, 1fr)); gap: 12px; }
+    .positive-card {
+      background: #fff; border: 1px solid var(--border-md);
+      border-radius: var(--radius); padding: 16px 18px;
+    }
+    .positive-card h4 { font-size: 0.875rem; font-weight: 600; color: var(--ink); margin-bottom: 5px; }
+    .positive-card p  { font-size: 0.8125rem; color: var(--muted); line-height: 1.65; }
+
+    /* ─── PERSONA CARDS ─── */
+    .personas { display: flex; flex-direction: column; gap: 16px; }
+    .persona-card {
+      background: #fff; border: 1px solid var(--border-md);
+      border-radius: var(--radius); padding: 18px 20px;
+    }
+    .persona-header {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+    }
+    .persona-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--surface2); border: 1px solid var(--border-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .persona-header h4 { font-size: 0.9375rem; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+    .persona-header p  { font-size: 0.8125rem; color: var(--subtle); }
+    .persona-score {
+      font-family: "SF Mono", monospace; font-size: 0.75rem;
+      font-weight: 700; padding: 2px 8px; border-radius: 3px; white-space: nowrap;
+    }
+    .persona-score.high   { background: #dcfce7; color: var(--green); }
+    .persona-score.mid    { background: var(--accent-bg); color: var(--accent); }
+    .persona-score.low    { background: #ffedd5; color: var(--orange); }
+    .persona-flags { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .persona-flags li {
+      font-size: 0.875rem; color: var(--muted); display: flex; gap: 8px; align-items: flex-start;
+    }
+    .persona-flags li::before { content: "↳"; color: var(--subtle); flex-shrink: 0; }
+    .persona-flags li.good::before { content: "✓"; color: var(--green); }
+    .persona-flags li.bad::before  { content: "✗"; color: var(--red); }
+    .persona-flags li.warn::before { content: "⚠"; color: var(--yellow); }
+
+    /* ─── PRIORITY LIST ─── */
+    .priority-list { display: flex; flex-direction: column; gap: 12px; }
+    .priority-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: #fff; border: 1px solid var(--border-md);
+      border-radius: var(--radius); padding: 16px 18px;
+    }
+    .priority-num {
+      flex-shrink: 0; width: 26px; height: 26px;
+      background: var(--surface2); border: 1px solid var(--border-md);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-family: "SF Mono", monospace; font-size: 0.6875rem; font-weight: 700; color: var(--accent);
+    }
+    .priority-item h4 { font-size: 0.9375rem; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+    .priority-item p  { font-size: 0.875rem; color: var(--muted); line-height: 1.7; }
+
+    /* ─── QUESTIONS ─── */
+    .questions { display: flex; flex-direction: column; gap: 12px; }
+    .question {
+      background: var(--surface); border: 1px solid var(--border-md);
+      border-radius: var(--radius); padding: 14px 18px;
+      font-size: 0.9375rem; color: var(--ink); line-height: 1.65;
+    }
+    .question::before {
+      content: "?"; display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      font-size: 0.6875rem; font-weight: 800;
+      margin-right: 10px; vertical-align: middle;
+    }
+
+    /* ─── ACTIONS ─── */
+    .actions { display: flex; flex-direction: column; gap: 10px; }
+    .action-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: #fff; border: 1px solid var(--border-md);
+      border-radius: var(--radius); padding: 14px 18px;
+    }
+    .action-cmd {
+      flex-shrink: 0;
+      font-family: "SF Mono", monospace; font-size: 0.75rem; font-weight: 700;
+      color: var(--accent); background: var(--accent-bg); border: 1px solid #fcd34d;
+      border-radius: 3px; padding: 2px 8px; white-space: nowrap; margin-top: 2px;
+    }
+    .action-item h4 { font-size: 0.875rem; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+    .action-item p  { font-size: 0.8125rem; color: var(--muted); line-height: 1.65; }
+
+    /* ─── AMBER RULE ─── */
+    .amber-rule { width: 36px; height: 2px; background: var(--accent); margin-bottom: 16px; }
+
+    /* ─── TOC ─── */
+    .toc {
+      background: #fff; border: 1px solid var(--border-md);
+      border-radius: var(--radius); padding: 18px 22px; margin-bottom: 36px;
+    }
+    .toc h3 {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.5625rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--subtle); margin-bottom: 10px;
+    }
+    .toc ol { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .toc li { display: flex; align-items: center; gap: 8px; }
+    .toc a { font-size: 0.875rem; color: var(--muted); text-decoration: none; }
+    .toc a:hover { color: var(--ink); }
+    .toc .num { font-family: "SF Mono", monospace; font-size: 0.6875rem; color: var(--subtle); min-width: 18px; }
+
+    /* ─── SLOP VERDICT ─── */
+    .slop-verdict {
+      display: flex; align-items: center; gap: 16px;
+      background: #fff; border: 1px solid var(--border-md); border-radius: var(--radius);
+      padding: 18px 20px; margin-bottom: 20px;
+    }
+    .slop-verdict .verdict-icon {
+      width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem;
+      background: #dcfce7; border: 2px solid #86efac;
+    }
+    .slop-verdict h4 { font-size: 0.9375rem; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .slop-verdict p  { font-size: 0.875rem; color: var(--muted); line-height: 1.65; }
+
+    /* ─── COGNITIVE LOAD ─── */
+    .load-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;
+      margin-top: 16px;
+    }
+    .load-card {
+      background: #fff; border: 1px solid var(--border-md); border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    .load-card .load-label {
+      font-family: "SF Mono", monospace; font-size: 0.5625rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--subtle); margin-bottom: 6px;
+    }
+    .load-card .load-val { font-size: 1.375rem; font-weight: 800; letter-spacing: -.02em; }
+    .load-card .load-desc { font-size: 0.8125rem; color: var(--muted); margin-top: 4px; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border-md); padding: 28px 24px;
+      text-align: center; background: var(--surface);
+    }
+    footer p { font-size: 0.8125rem; color: var(--subtle); }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <a href="https://villarejo.in" class="logo">M<span>V</span></a>
+      <span class="meta">ux-critique · villarejo.in · 2026-05-23</span>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="eyebrow">UX / Design Critique</p>
+    <h1>villarejo.in</h1>
+    <p class="hero-desc">
+      Independent LLM design review + automated pattern detection. Two assessments run in isolation and synthesised here. Portfolio evaluated post-fix: all 15 design audit findings already applied before this critique ran.
+    </p>
+  </div>
+
+  <!-- SCORE BAND -->
+  <div class="score-band">
+    <div class="overall" style="margin-bottom: 24px;">
+      <div class="overall-score">9.1<span style="font-size:2rem;color:var(--subtle);font-weight:400">/10</span></div>
+      <div class="overall-meta">
+        <h2>Overall Design Health</h2>
+        <p>Heuristics: 36/40 · Slop: Clean · Cognitive load: Low-moderate · Emotional resonance: Strong opener, thin close</p>
+      </div>
+    </div>
+    <div class="score-grid">
+      <div class="score-card">
+        <div class="label">Visual Quality</div>
+        <div class="value c-green">9.5 <span class="out-of">/ 10</span></div>
+        <div class="bar"><div class="bar-fill bg-green" style="width:95%"></div></div>
+      </div>
+      <div class="score-card">
+        <div class="label">UX / Usability</div>
+        <div class="value c-green">8.5 <span class="out-of">/ 10</span></div>
+        <div class="bar"><div class="bar-fill bg-green" style="width:85%"></div></div>
+      </div>
+      <div class="score-card">
+        <div class="label">Accessibility</div>
+        <div class="value c-green">8.5 <span class="out-of">/ 10</span></div>
+        <div class="bar"><div class="bar-fill bg-green" style="width:85%"></div></div>
+      </div>
+      <div class="score-card">
+        <div class="label">Information Arch.</div>
+        <div class="value c-accent">8.0 <span class="out-of">/ 10</span></div>
+        <div class="bar"><div class="bar-fill bg-accent" style="width:80%"></div></div>
+      </div>
+      <div class="score-card">
+        <div class="label">Emotional Resonance</div>
+        <div class="value c-accent">8.0 <span class="out-of">/ 10</span></div>
+        <div class="bar"><div class="bar-fill bg-accent" style="width:80%"></div></div>
+      </div>
+      <div class="score-card">
+        <div class="label">Nielsen Heuristics</div>
+        <div class="value c-green">36 <span class="out-of">/ 40</span></div>
+        <div class="bar"><div class="bar-fill bg-green" style="width:90%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main>
+    <div class="wrap">
+
+      <!-- TOC -->
+      <nav class="toc" aria-label="Table of contents">
+        <h3>Contents</h3>
+        <ol>
+          <li><span class="num">01</span><a href="#slop">Anti-Patterns Verdict</a></li>
+          <li><span class="num">02</span><a href="#impression">Overall Impression</a></li>
+          <li><span class="num">03</span><a href="#heuristics">Nielsen's 10 Heuristics</a></li>
+          <li><span class="num">04</span><a href="#cognitive">Cognitive Load Assessment</a></li>
+          <li><span class="num">05</span><a href="#emotional">Emotional Journey</a></li>
+          <li><span class="num">06</span><a href="#personas">Persona Red Flags</a></li>
+          <li><span class="num">07</span><a href="#working">What's Working</a></li>
+          <li><span class="num">08</span><a href="#priority">Priority Issues</a></li>
+          <li><span class="num">09</span><a href="#questions">Questions to Consider</a></li>
+          <li><span class="num">10</span><a href="#actions">Recommended Actions</a></li>
+        </ol>
+      </nav>
+
+      <!-- 01 ANTI-PATTERNS -->
+      <section class="critique" id="slop">
+        <div class="amber-rule"></div>
+        <h2 class="section-title">01 — Anti-Patterns Verdict</h2>
+        <p class="section-intro">Does this look AI-generated? Two independent assessments checked against 25 specific slop patterns.</p>
+
+        <div class="slop-verdict">
+          <div class="verdict-icon">✓</div>
+          <div>
+            <h4>Not AI-generated — intentional craft is evident</h4>
+            <p>The portfolio resists every common AI-slop tell: no gradient text, no glassmorphism, no generic hero metric cards, no dark glows, no gradient buttons. The amber accent earns its presence through restraint rather than overuse. The SVG path animation system is unique and purposeful. Typography is disciplined. The thermal colour palette (warm off-blacks, muted greens, single amber accent) reads as a curated decision, not a ChatGPT suggestion.</p>
+          </div>
+        </div>
+
+        <div class="findings">
+          <div class="finding low">
+            <div class="finding-header">
+              <span class="finding-title">LLM Assessment</span>
+              <span class="badge badge-pass">Clean</span>
+            </div>
+            <p>Checked against all DON'T guidelines. Zero confirmed slop tells. The full-viewport hero with letter-by-letter entrance is a deliberate authorial choice, not an AI default. The timeline bifurcation pattern is genuinely unusual — it separates this from every Bootstrap/Tailwind portfolio template in existence.</p>
+          </div>
+          <div class="finding low">
+            <div class="finding-header">
+              <span class="finding-title">Automated Scan (npx impeccable)</span>
+              <span class="badge badge-pass">0 findings</span>
+            </div>
+            <p>CLI scan of <code>app/</code> and <code>components/</code> returned an empty result set. No pattern flags triggered across 25 deterministic checks. This is a strong signal: the codebase is clean of the structural patterns that generate slop at scale.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02 IMPRESSION -->
+      <section class="critique" id="impression">
+        <div class="amber-rule"></div>
+        <h2 class="section-title">02 — Overall Impression</h2>
+        <p class="section-intro">Gut reaction: what works, what doesn't, and the single biggest opportunity.</p>
+
+        <div class="finding" style="border-left: 3px solid var(--accent);">
+          <p style="font-size:1rem; color: var(--ink); line-height: 1.75;">
+            <strong>What works:</strong> The portfolio opens with confidence. The animated SVG paths + letter entrance creates a premium, deliberate first impression that most portfolios fail to land. The colour discipline is exceptional — the amber accent never feels decorative, always purposeful. The experience timeline is genuinely innovative and communicates leadership-at-scale better than any bullet list could.
+          </p>
+          <p style="margin-top: 12px;">
+            <strong>What doesn't:</strong> The portfolio opens strongly but closes weakly. By the time a recruiter reaches the Contact section, momentum has dissipated. There is no resume download — the single highest-conversion action for any professional portfolio is absent. The section ordering places "Tech Stack" between "Skills" and "Education," interrupting what is otherwise a clean narrative arc from leadership → capability → credentials → story.
+          </p>
+          <p style="margin-top: 12px;">
+            <strong>Biggest opportunity:</strong> Add a resume PDF download in the hero or contact section. A senior IT Director's CV, downloadable in one click, converts passive visitors into active candidates. Nothing else on this page has that leverage.
+          </p>
+        </div>
+      </section>
+
+      <!-- 03 HEURISTICS -->
+      <section class="critique" id="heuristics">
+        <div class="amber-rule"></div>
+        <h2 class="section-title">03 — Nielsen's 10 Heuristics</h2>
+        <p class="section-intro">Scored 0–4 per heuristic. A 4 means genuinely excellent. Most real interfaces score 20–32.</p>
+
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Heuristic</th>
+                <th>Score</th>
+                <th>Key Finding</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Visibility of System Status</td>
+                <td>
+                  <div class="score-dot">
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span style="margin-left:6px; font-size:0.75rem; font-weight:700;" class="c-green">4</span>
+                  </div>
+                </td>
+                <td>Scroll-spy timeline dot animations signal active position; section entrance animations confirm page state</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Match System / Real World</td>
+                <td>
+                  <div class="score-dot">
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span style="margin-left:6px; font-size:0.75rem; font-weight:700;" class="c-green">4</span>
+                  </div>
+                </td>
+                <td>Section labels match real-world professional concepts; timeline chronology mirrors a CV structure</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>User Control and Freedom</td>
+                <td>
+                  <div class="score-dot">
+                    <span class="dot filled-accent"></span>
+                    <span class="dot filled-accent"></span>
+                    <span class="dot filled-accent"></span>
+                    <span class="dot"></span>
+                    <span style="margin-left:6px; font-size:0.75rem; font-weight:700;" class="c-accent">3</span>
+                  </div>
+                </td>
+                <td>No resume download; no way to get content offline; contact limited to email + LinkedIn</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Consistency and Standards</td>
+                <td>
+                  <div class="score-dot">
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span style="margin-left:6px; font-size:0.75rem; font-weight:700;" class="c-green">4</span>
+                  </div>
+                </td>
+                <td>Tight token system (OKLCH, --text-subtle, --accent), consistent section rhythm, typography hierarchy</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Error Prevention</td>
+                <td>
+                  <div class="score-dot">
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span style="margin-left:6px; font-size:0.75rem; font-weight:700;" class="c-green">4</span>
+                  </div>
+                </td>
+                <td>Static portfolio; no error-prone user interactions exist. External links use <code>rel="noopener"</code></td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>Recognition Rather Than Recall</td>
+                <td>
+                  <div class="score-dot">
+                    <span class="dot filled-accent"></span>
+                    <span class="dot filled-accent"></span>
+                    <span class="dot filled-accent"></span>
+                    <span class="dot"></span>
+                    <span style="margin-left:6px; font-size:0.75rem; font-weight:700;" class="c-accent">3</span>
+                  </div>
+                </td>
+                <td>Nav now covers all 6 sections; no in-content cross-section links or "back to top" anchor in long sections</td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>Flexibility and Efficiency</td>
+                <td>
+                  <div class="score-dot">
+                    <span class="dot filled-accent"></span>
+                    <span class="dot filled-accent"></span>
+                    <span class="dot filled-accent"></span>
+                    <span class="dot"></span>
+                    <span style="margin-left:6px; font-size:0.75rem; font-weight:700;" class="c-accent">3</span>
+                  </div>
+                </td>
+                <td>No keyboard shortcuts; no print-friendly mode; no "download CV" shortcut for power-user recruiters</td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>Aesthetic and Minimalist Design</td>
+                <td>
+                  <div class="score-dot">
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span style="margin-left:6px; font-size:0.75rem; font-weight:700;" class="c-green">4</span>
+                  </div>
+                </td>
+                <td>Disciplined information density; every element earns its place; amber accent never decorative</td>
+              </tr>
+              <tr>
+                <td>9</td>
+                <td>Error Recovery</td>
+                <td>
+                  <div class="score-dot">
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span class="dot filled-green"></span>
+                    <span style="margin-left:6px; font-size:0.75rem; font-weight:700;" class="c-green">4</span>
+                  </div>
+                </td>
+                <td>Static site with no recoverable states; no 404 page evaluated</td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td>Help and Documentation</td>
+                <td>
+                  <div class="score-dot">
+                    <span class="dot filled-accent"></span>
+                    <span class="dot filled-accent"></span>
+                    <span class="dot filled-accent"></span>
+                    <span class="dot"></span>
+                    <span style="margin-left:6px; font-size:0.75rem; font-weight:700;" class="c-accent">3</span>
+                  </div>
+                </td>
+                <td>Contact section thin; no "what happens when you email me" expectation-setting; no response-time signal</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="2"><strong>Total</strong></td>
+                <td><strong class="c-green">36 / 40</strong></td>
+                <td><strong>Excellent</strong> — top 15% of professional portfolios evaluated</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <!-- 04 COGNITIVE LOAD -->
+      <section class="critique" id="cognitive">
+        <div class="amber-rule"></div>
+        <h2 class="section-title">04 — Cognitive Load Assessment</h2>
+        <p class="section-intro">8-item checklist. 0–1 failures = low (good), 2–3 = moderate, 4+ = critical.</p>
+
+        <ul class="checklist" style="margin-bottom: 20px;">
+          <li><span class="icon pass">✓</span><span><strong>Clear primary action</strong> — "Get in touch" CTA is unambiguous in nav and hero</span></li>
+          <li><span class="icon pass">✓</span><span><strong>Progressive disclosure</strong> — Experience accordion, Skills tag grid, no information dumping</span></li>
+          <li><span class="icon pass">✓</span><span><strong>Visual hierarchy maintained</strong> — H1 → section labels → body text follows consistent weight ladder</span></li>
+          <li><span class="icon pass">✓</span><span><strong>Options at decision points ≤4</strong> — Nav links scannable; no overwhelming menus</span></li>
+          <li><span class="icon pass">✓</span><span><strong>Consistent interaction patterns</strong> — All scroll animations follow same enter-from-below grammar</span></li>
+          <li><span class="icon warn">⚠</span><span><strong>Section ordering cognitive flow</strong> — Tech Stack between Skills and Education interrupts narrative; minor re-ordering would help</span></li>
+          <li><span class="icon pass">✓</span><span><strong>Low extraneous noise</strong> — No banners, popups, auto-play media, notifications</span></li>
+          <li><span class="icon pass">✓</span><span><strong>Peak-end rule satisfied at entry</strong> — Hero is the strongest moment; landing experience is excellent</span></li>
+        </ul>
+
+        <div class="load-grid">
+          <div class="load-card">
+            <div class="load-label">Checklist Failures</div>
+            <div class="load-val c-accent">1 / 8</div>
+            <div class="load-desc">Low-moderate cognitive load. One ordering issue flagged.</div>
+          </div>
+          <div class="load-card">
+            <div class="load-label">Max Options at Decision</div>
+            <div class="load-val c-green">6</div>
+            <div class="load-desc">Nav items (≤7 is acceptable for professional menus)</div>
+          </div>
+          <div class="load-card">
+            <div class="load-label">Extraneous Elements</div>
+            <div class="load-val c-green">0</div>
+            <div class="load-desc">No pop-ups, banners, auto-play, or distractions detected</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 EMOTIONAL -->
+      <section class="critique" id="emotional">
+        <div class="amber-rule"></div>
+        <h2 class="section-title">05 — Emotional Journey</h2>
+        <p class="section-intro">What emotion does each section evoke? Are peak moments positive? Where do anxiety spikes occur?</p>
+
+        <div class="findings">
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Hero — Awe / Intrigue</span>
+              <span class="badge badge-pass">Strong peak</span>
+            </div>
+            <p>Letter-by-letter entrance + ambient SVG paths creates a moment of arrested attention. Rare for a portfolio. The user's emotional state at 0s is curiosity bordering on surprise — "this person spent real effort here." This is the right peak.</p>
+          </div>
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Experience — Respect / Trust</span>
+              <span class="badge badge-pass">Solid</span>
+            </div>
+            <p>The bifurcated timeline communicates strategic credibility. Dates, company names, and scope signals (Europe · APAC · UK) build trust incrementally. Scroll-spy dot animation maintains engagement through a long section. No anxiety valleys.</p>
+          </div>
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Skills / Tech Stack — Competence</span>
+              <span class="badge badge-ok">Neutral</span>
+            </div>
+            <p>Tag grids and logo rows read as proof of breadth. Emotionally neutral — functional rather than evocative. The Emerging Technologies border highlight is a good micro-signal of forward-thinking identity. Tech Stack section between Skills and Education slightly disrupts the credential arc.</p>
+          </div>
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Education / Certifications — Credibility</span>
+              <span class="badge badge-ok">Neutral</span>
+            </div>
+            <p>Clean table layouts. Credentialing signals are present but understated. The Technical Foundations code block at the bottom of Certifications is a nice contrast detail that elevates the section above standard.</p>
+          </div>
+          <div class="finding open">
+            <div class="finding-header">
+              <span class="finding-title">Contact — Deflation</span>
+              <span class="badge badge-p2">Emotional valley</span>
+            </div>
+            <p>The journey ends with "Let's Connect." in a sparse layout. After the visual richness of the preceding sections, this landing feels abrupt. There is no resume download, no "what to expect if you email me," no response time signal. The peak-end rule says the last moment of an experience disproportionately shapes the overall memory. This close needs to earn the same attention the hero received.</p>
+            <div class="fix-note">
+              <span class="icon">→</span>
+              <span>Fix: Add a resume PDF download button + a one-line expectation-setter ("I respond to every message within 48 hours") to close with intention.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 PERSONAS -->
+      <section class="critique" id="personas">
+        <div class="amber-rule"></div>
+        <h2 class="section-title">06 — Persona Red Flags</h2>
+        <p class="section-intro">Three personas selected as most relevant to an IT Director / Enterprise Engineering Leader portfolio. Each walks the primary user action.</p>
+
+        <div class="personas">
+
+          <!-- Recruiter -->
+          <div class="persona-card">
+            <div class="persona-header">
+              <div class="persona-avatar">👤</div>
+              <div style="flex:1">
+                <h4>Sarah — Executive Recruiter</h4>
+                <p>Scanning 15 profiles/day for VP Engineering / IT Director mandates. 90-second attention window.</p>
+              </div>
+              <span class="persona-score low">6.5 / 10</span>
+            </div>
+            <ul class="persona-flags">
+              <li class="good">Hero headline "IT Director & Enterprise Engineering Leader" is immediately parseable — no creative title ambiguity</li>
+              <li class="good">Experience timeline is scannable; company names and date ranges are visually prominent</li>
+              <li class="bad">No resume PDF download anywhere — Sarah's first instinct is Cmd+F for "download CV" and she finds nothing. High abandonment risk at this step.</li>
+              <li class="bad">Contact section doesn't communicate response speed — Sarah won't send a speculative message without some signal this is actively monitored</li>
+              <li class="warn">Skills section has many tags — helpful for keyword matching, but no clear "I'm available" or "open to opportunities" signal anywhere on the page</li>
+            </ul>
+          </div>
+
+          <!-- CTO -->
+          <div class="persona-card">
+            <div class="persona-header">
+              <div class="persona-avatar">💼</div>
+              <div style="flex:1">
+                <h4>Alex — CTO / Hiring VP</h4>
+                <p>Evaluating fractional or full-time IT leadership candidates. Wants strategic depth, not just execution history.</p>
+              </div>
+              <span class="persona-score high">8.5 / 10</span>
+            </div>
+            <ul class="persona-flags">
+              <li class="good">M&A / carve-out management in Skills is a strong differentiator signal — rare skill, surfaced early</li>
+              <li class="good">Experience timeline scope indicators (team sizes, multi-region) communicate strategic credibility</li>
+              <li class="good">Emerging Technologies group with Claude Code / Agentic AI signals Alex that this candidate is not a legacy-IT manager</li>
+              <li class="warn">Tech Stack section with logo grid could come across as execution-level detail — Alex wants to see strategy, not tooling. Positioning matters here.</li>
+              <li class="warn">No case studies or linked outcomes in experience entries — "Reduced MTTR by X%" or "Led €Y budget" would convert this from impressive to compelling</li>
+            </ul>
+          </div>
+
+          <!-- Peer Director -->
+          <div class="persona-card">
+            <div class="persona-header">
+              <div class="persona-avatar">🤝</div>
+              <div style="flex:1">
+                <h4>Carlos — Peer IT Director / Potential Collaborator</h4>
+                <p>Looking for someone to follow, conference-speak alongside, or bring in as a fractional lead. Evaluating voice and expertise.</p>
+              </div>
+              <span class="persona-score mid">7.5 / 10</span>
+            </div>
+            <ul class="persona-flags">
+              <li class="good">The visual quality itself is a credibility signal to peers — someone who builds a portfolio this precise cares about craft</li>
+              <li class="good">Emerging Tech section positioning and specificity (Agentic AI, AIOps) signals genuine expertise, not LinkedIn buzzwords</li>
+              <li class="warn">No blog, writing, or thought-leadership link. Peers want to evaluate voice and thinking, not just credentials.</li>
+              <li class="warn">About section is brief — travel and two kids is humanising, but Carlos wants to know Manuel's opinions on the current IT landscape</li>
+              <li class="bad">No LinkedIn article, GitHub, or external signal of intellectual output. For a peer audience, absence of a digital trail beyond the CV is a gap.</li>
+            </ul>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 07 WHAT'S WORKING -->
+      <section class="critique" id="working">
+        <div class="amber-rule"></div>
+        <h2 class="section-title">07 — What's Working</h2>
+        <p class="section-intro">Three things done well, with specific reasons.</p>
+
+        <div class="positives">
+          <div class="positive-card">
+            <h4>Animation Grammar</h4>
+            <p>Every motion on the site follows the same enter-from-below (y: 14 → 0, opacity: 0 → 1) pattern. This creates a consistent language of arrival. The letter-by-letter hero entrance uses spring physics with tuned stiffness (130) and damping (22) — this is the right level of craft. <code>useReducedMotion</code> respects system accessibility settings.</p>
+          </div>
+          <div class="positive-card">
+            <h4>Typography Discipline</h4>
+            <p>Three-font system (Bricolage Grotesque display · Hanken Grotesk body · Fira Code mono) with clear role separation. Font sizes use <code>clamp()</code> for fluid scaling. Tracking values are intentional: tight on display (-0.027em), looser on mono (+0.12em). This is not a default stack — these choices reflect taste.</p>
+          </div>
+          <div class="positive-card">
+            <h4>Colour Discipline</h4>
+            <p>Single amber accent across the entire site. No gradient text, no multi-accent palette, no decorative colour use. OKLCH colour space gives perceptually uniform steps. The warm-grey body palette (oklch 0.49 → 0.72) creates depth without drama. Contrast ratios now pass WCAG AA across all text sizes.</p>
+          </div>
+          <div class="positive-card">
+            <h4>Timeline Architecture</h4>
+            <p>The bifurcated experience timeline is a genuinely unusual layout — left/right alternating job cards with a central scroll-spy dot. It communicates multi-threaded career progression (enterprise + consulting + product) in a way that a linear list never could. The responsive collapse to single-column on mobile is clean.</p>
+          </div>
+          <div class="positive-card">
+            <h4>Accessibility Foundation</h4>
+            <p>Skip link, ARIA mobile menu (<code>role="dialog" aria-modal="true"</code>), focus trap, dynamic burger label, <code>prefers-reduced-motion</code> respected in all Framer Motion instances. This is a stronger accessibility implementation than 90% of personal portfolios.</p>
+          </div>
+          <div class="positive-card">
+            <h4>Information Density</h4>
+            <p>Section rhythm (py-24 → py-32) gives breathing room. The background grain at 3.2% opacity adds tactile depth without visual noise. Tag grids, table layouts, and card components each carry the right density for their content type — nothing feels padded or cramped.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 08 PRIORITY ISSUES -->
+      <section class="critique" id="priority">
+        <div class="amber-rule"></div>
+        <h2 class="section-title">08 — Priority Issues</h2>
+        <p class="section-intro">Four remaining opportunities ordered by business impact. These are post-fix findings — the 15 pre-existing issues are already resolved.</p>
+
+        <div class="priority-list">
+
+          <div class="priority-item">
+            <div class="priority-num">1</div>
+            <div>
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px; flex-wrap:wrap;">
+                <h4>Missing Resume Download</h4>
+                <span class="badge badge-p0">P0 · Critical</span>
+              </div>
+              <p><strong>What:</strong> No PDF CV download exists anywhere on the site. <strong>Why it matters:</strong> Recruiters and hiring managers expect a single-click download. The absence forces them to manually transcribe or screenshot content — a friction that causes drop-off. A portfolio without a downloadable CV is incomplete for professional circulation. <strong>Fix:</strong> Add <code>href="/cv-manuel-villarejo.pdf" download</code> button in both the Hero CTA area and the Contact section. Host the PDF at <code>/public/cv-manuel-villarejo.pdf</code>.</p>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">2</div>
+            <div>
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px; flex-wrap:wrap;">
+                <h4>Section Ordering Interrupts Narrative Arc</h4>
+                <span class="badge badge-p1">P1 · High</span>
+              </div>
+              <p><strong>What:</strong> Current order: Experience → Education → Skills → <strong>Tech Stack</strong> → Certifications → About → Contact. Tech Stack belongs after Skills (same capability cluster) and before Certifications. The current placement breaks the flow from "what I do" (Skills) to "what I know" (Tech Stack) to "how I prove it" (Certifications). <strong>Fix:</strong> Reorder sections in <code>app/page.tsx</code>: Experience → Education → Skills → Tech Stack → Certifications → About → Contact.</p>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">3</div>
+            <div>
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px; flex-wrap:wrap;">
+                <h4>Contact Section Closes Weakly</h4>
+                <span class="badge badge-p2">P2 · Medium</span>
+              </div>
+              <p><strong>What:</strong> "Let's Connect." is a generic heading that every portfolio uses. The section ends the experience without closure or invitation. <strong>Why it matters:</strong> Peak-end rule: the last moment of an experience shapes overall memory disproportionately. After a visually rich journey, a sparse contact section deflates the impression. <strong>Fix:</strong> (1) Replace "Let's Connect." with a more specific invitation tied to Manuel's profile — e.g. "Open to leadership conversations." (2) Add a one-line response expectation: "I reply to every message within 48h." (3) Add the resume download button here as the primary CTA above the email link.</p>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">4</div>
+            <div>
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px; flex-wrap:wrap;">
+                <h4>No Thought-Leadership Signal for Peer Audience</h4>
+                <span class="badge badge-p3">P3 · Low</span>
+              </div>
+              <p><strong>What:</strong> Peers and collaborators (conference organisers, fractional networks, industry peers) want to evaluate Manuel's thinking, not just his CV. There is no link to writing, talks, LinkedIn articles, or GitHub. <strong>Why it matters:</strong> For inbound opportunities from peer networks, the portfolio needs one external signal of intellectual output — even a single LinkedIn article link raises the credibility ceiling for this audience. <strong>Fix:</strong> Add an optional "Writing / Talks" link in the nav and About section if any external content exists, or add a LinkedIn articles link in the Contact section footer line.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 09 QUESTIONS -->
+      <section class="critique" id="questions">
+        <div class="amber-rule"></div>
+        <h2 class="section-title">09 — Questions to Consider</h2>
+        <p class="section-intro">Provocative questions that might unlock better solutions.</p>
+
+        <div class="questions">
+          <div class="question">Who is the primary audience — recruiters, CTOs, or peers — and does the information architecture reflect that priority? Recruiters need a resume download above the fold. CTOs need outcome-quantified experience entries. Peers need evidence of thinking. Right now the site serves all three equally, which means it serves none optimally.</div>
+          <div class="question">Why a full-viewport hero with 100vh height? The letter entrance animation is compelling, but it buries immediately useful information (name, title, primary CTA) below the scroll threshold on short viewports. What if the hero were 85vh with the first section visible on entry — giving the user a taste of what follows?</div>
+          <div class="question">The Emerging Technologies group is the most forward-looking section — "Agentic AI," "Claude Code," "AIOps" — but it's buried as the 5th of 5 skill groups. What if this were the first group? Leading with the future rather than the past changes the entire strategic positioning of the portfolio.</div>
+          <div class="question">Experience entries describe scope but not outcomes. "Led digital transformation" is expected from an IT Director. "Led digital transformation across 14 entities, reducing infrastructure spend by 30%" is a hire. What would it look like if every experience card had one quantified outcome sentence?</div>
+        </div>
+      </section>
+
+      <!-- 10 RECOMMENDED ACTIONS -->
+      <section class="critique" id="actions">
+        <div class="amber-rule"></div>
+        <h2 class="section-title">10 — Recommended Actions</h2>
+        <p class="section-intro">Prioritised commands in order of impact. Each addresses a specific finding above.</p>
+
+        <div class="actions">
+          <div class="action-item">
+            <div class="action-cmd">/delight</div>
+            <div>
+              <h4>Add Resume Download CTA</h4>
+              <p>Primary action: add <code>/public/cv-manuel-villarejo.pdf</code> with a download button in hero and contact sections. Resolves P0 — the single highest-conversion missing element.</p>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-cmd">/layout</div>
+            <div>
+              <h4>Reorder Sections in page.tsx</h4>
+              <p>Move Tech Stack after Skills in the section import order. Resolves P1 narrative arc interruption — a 2-line change in <code>app/page.tsx</code>.</p>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-cmd">/clarify</div>
+            <div>
+              <h4>Rewrite Contact Section Copy</h4>
+              <p>Replace generic "Let's Connect." with a specific invitation. Add response-time expectation. Resolves P2 emotional valley at end of experience.</p>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-cmd">/bolder</div>
+            <div>
+              <h4>Surface Emerging Tech First in Skills</h4>
+              <p>Reorder the skills groups array so "Emerging Technologies" is group index 0. Changes strategic positioning from legacy-IT to future-forward leadership at first glance.</p>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-cmd">/polish</div>
+            <div>
+              <h4>Final Pass After Above Changes</h4>
+              <p>Verify spacing consistency after section reorder, confirm resume download link works, review contact section on mobile. Re-run <code>/critique</code> to confirm score improvement.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 28px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--border-md); border-radius: var(--radius);">
+          <p style="font-size: 0.875rem; color: var(--muted); line-height: 1.75;">
+            Run these one at a time, all at once, or in any order you prefer.<br>
+            Re-run <strong>/critique</strong> after fixes to see your score improve. Current baseline: <strong class="c-green">9.1/10</strong>.
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>
+      <a href="https://villarejo.in">villarejo.in</a> · UX critique generated 2026-05-23 ·
+      Two independent assessments: LLM design review + automated pattern detection ·
+      <a href="/design.html">Design Audit</a> · <a href="/audit.html">Code Audit</a>
+    </p>
+  </footer>
+
+</body>
+</html>

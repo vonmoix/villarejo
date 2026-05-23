@@ -67,15 +67,12 @@ function SkillGroup({ group, index }: { group: (typeof groups)[0]; index: number
   const inView       = useInView(ref, { once: true, margin: "-40px 0px" });
   const shouldReduce = useReducedMotion();
 
-  const isEmerging = index === 4;
-
   return (
     <motion.div
       ref={ref}
       initial={shouldReduce ? false : { opacity: 0, y: 14 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={shouldReduce ? { duration: 0 } : { duration: 0.5, delay: index * 0.07 }}
-      className={cn(isEmerging && "rounded-lg border border-accent/20 p-4 -m-4")}
     >
       <p className="font-display font-semibold text-[0.9375rem] tracking-[-0.01em] text-ink pb-3 mb-4 border-b border-[var(--border-subtle)]">
         {group.title}
