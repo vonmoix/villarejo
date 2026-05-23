@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Hanken_Grotesk, Fira_Code } from "next/font/google";
 import "./globals.css";
 
@@ -23,10 +23,29 @@ const firaCode = Fira_Code({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#0f0e0c",
+};
+
+const TITLE       = "Manuel Villarejo — IT Director & Enterprise Engineering Leader";
+const DESCRIPTION = "IT Director and Enterprise engineering Leader with 19 years designing and scaling enterprise technology platforms across Europe and APAC.";
+
 export const metadata: Metadata = {
-  title: "Manuel Villarejo — IT Director & Enterprise Engineering Leader",
-  description:
-    "IT Director and Enterprise Engineering Leader with 19 years designing and scaling enterprise technology platforms.",
+  metadataBase: new URL("https://www.villarejo.in"),
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    url: "https://www.villarejo.in",
+    siteName: "Manuel Villarejo",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 };
 
 export default function RootLayout({

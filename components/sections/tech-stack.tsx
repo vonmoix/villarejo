@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { siAmazonaws, siMicrosoftazure, siMicrosoftoffice } from "simple-icons";
+import Image from "next/image";
 
 const SI = "https://cdn.simpleicons.org";
 const AMBER = "#f59e0b";
@@ -58,14 +59,14 @@ function Logo({ tech }: { tech: Tech }) {
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={tech.src}
+    <Image
+      src={tech.src!}
       alt={tech.name}
       width={36}
       height={36}
       onError={() => setFailed(true)}
       className="w-full h-full object-contain"
+      unoptimized
     />
   );
 }
@@ -77,7 +78,7 @@ export function TechStack() {
   return (
     <section id="tech" className="py-16 md:py-20 border-t border-[var(--border-subtle)]">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
-        <p className="font-mono text-[0.6875rem] text-accent tracking-[0.12em] uppercase mb-3">
+        <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.12em] uppercase mb-3">
           Tech Stack
         </p>
         <h2

@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Design Critique — villarejo.in</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0f0e0c;
+      --surface:  #161512;
+      --surface2: #1c1b18;
+      --border:   rgba(255,255,255,0.07);
+      --ink:      #f0ece6;
+      --muted:    #9b9488;
+      --subtle:   #5c5651;
+      --accent:   #f59e0b;
+      --accent-lo:#7c4f06;
+      --red:      #ef4444;
+      --orange:   #f97316;
+      --yellow:   #eab308;
+      --green:    #22c55e;
+      --blue:     #3b82f6;
+      --radius:   6px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── LAYOUT ─── */
+    .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
+
+    /* ─── HEADER ─── */
+    header {
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    .header-inner {
+      max-width: 1060px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+    .logo { font-weight: 700; font-size: 1rem; letter-spacing: -.02em; color: var(--ink); text-decoration: none; }
+    .logo span { color: var(--accent); }
+    .meta { font-size: 0.75rem; color: var(--muted); font-family: "SF Mono", "Fira Code", monospace; }
+
+    /* ─── HERO ─── */
+    .hero {
+      padding: 72px 24px 56px;
+      max-width: 1060px; margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+    .eyebrow {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.6875rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 14px;
+    }
+    h1 {
+      font-size: clamp(2.25rem, 5vw, 3.5rem);
+      font-weight: 800; letter-spacing: -.035em; line-height: 1.05;
+      color: var(--ink); margin-bottom: 16px;
+    }
+    .hero-desc { font-size: 1rem; color: var(--muted); max-width: 56ch; line-height: 1.75; }
+
+    /* ─── SCORE BAND ─── */
+    .score-band {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 32px 24px;
+    }
+    .score-grid {
+      max-width: 1060px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px;
+    }
+    .score-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+    }
+    .score-card .label {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.625rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--subtle); margin-bottom: 8px;
+    }
+    .score-card .value {
+      font-size: 1.875rem; font-weight: 800; letter-spacing: -.03em; line-height: 1;
+    }
+    .score-card .out-of { font-size: 0.875rem; color: var(--muted); font-weight: 400; }
+    .score-card .bar {
+      height: 3px; background: var(--border); border-radius: 2px; margin-top: 10px;
+    }
+    .score-card .bar-fill {
+      height: 100%; border-radius: 2px; transition: width 1s ease;
+    }
+    .c-green { color: var(--green); }
+    .c-yellow { color: var(--yellow); }
+    .c-orange { color: var(--orange); }
+    .c-red { color: var(--red); }
+    .bg-green { background: var(--green); }
+    .bg-yellow { background: var(--yellow); }
+    .bg-orange { background: var(--orange); }
+    .bg-red { background: var(--red); }
+    .bg-accent { background: var(--accent); }
+
+    /* ─── OVERALL SCORE ─── */
+    .overall {
+      max-width: 1060px; margin: 0 auto;
+      padding: 24px 24px 0;
+      display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    }
+    .overall-score {
+      font-size: 5rem; font-weight: 900; letter-spacing: -.04em; line-height: 1;
+      color: var(--accent);
+    }
+    .overall-meta h2 { font-size: 1.25rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .overall-meta p  { font-size: 0.875rem; color: var(--muted); max-width: 44ch; }
+
+    /* ─── MAIN CONTENT ─── */
+    main { padding: 48px 0 80px; }
+    section.critique { padding: 48px 0; border-bottom: 1px solid var(--border); }
+    section.critique:last-child { border-bottom: none; }
+
+    h2.section-title {
+      font-size: 1.5rem; font-weight: 700; letter-spacing: -.022em;
+      color: var(--ink); margin-bottom: 6px;
+    }
+    .section-intro { font-size: 0.9375rem; color: var(--muted); max-width: 60ch; margin-bottom: 28px; }
+
+    /* ─── BADGES ─── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.625rem; letter-spacing: .08em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 3px; font-weight: 600; white-space: nowrap;
+    }
+    .badge-p0 { background: rgba(239,68,68,.15); color: var(--red);   border: 1px solid rgba(239,68,68,.3); }
+    .badge-p1 { background: rgba(249,115,22,.15); color: var(--orange); border: 1px solid rgba(249,115,22,.3); }
+    .badge-p2 { background: rgba(234,179,8,.15);  color: var(--yellow); border: 1px solid rgba(234,179,8,.3); }
+    .badge-p3 { background: rgba(34,197,94,.15);  color: var(--green);  border: 1px solid rgba(34,197,94,.3); }
+    .badge-ok { background: rgba(245,158,11,.10); color: var(--accent); border: 1px solid rgba(245,158,11,.25); }
+    .badge-dot::before { content: "●"; font-size: .5rem; }
+
+    /* ─── FINDING CARDS ─── */
+    .findings { display: flex; flex-direction: column; gap: 14px; }
+    .finding {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+    }
+    .finding-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 12px; margin-bottom: 10px; flex-wrap: wrap;
+    }
+    .finding-title { font-weight: 600; font-size: 0.9375rem; color: var(--ink); }
+    .finding p { font-size: 0.875rem; color: var(--muted); line-height: 1.7; margin-bottom: 8px; }
+    .finding p:last-child { margin-bottom: 0; }
+    .finding code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.8125rem; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 3px;
+      padding: 1px 6px; color: var(--accent);
+    }
+    .fix-block {
+      margin-top: 12px; padding: 12px 14px;
+      background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.18);
+      border-radius: 4px;
+    }
+    .fix-label {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.5625rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .fix-block p { color: var(--muted); font-size: 0.875rem; margin-bottom: 0; }
+    pre {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.8125rem; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 4px;
+      padding: 14px 16px; overflow-x: auto; color: var(--muted);
+      margin-top: 10px; line-height: 1.6;
+    }
+    pre .kw  { color: #c792ea; }
+    pre .str { color: #c3e88d; }
+    pre .num { color: var(--accent); }
+    pre .cm  { color: var(--subtle); }
+    pre .tag { color: #89ddff; }
+    pre .at  { color: #ffcb6b; }
+
+    /* ─── TABLE ─── */
+    .tbl-wrap { overflow-x: auto; }
+    table {
+      width: 100%; border-collapse: collapse; font-size: 0.875rem;
+    }
+    thead th {
+      text-align: left; padding: 10px 14px;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.625rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--subtle); border-bottom: 1px solid var(--border);
+    }
+    tbody td {
+      padding: 12px 14px; border-bottom: 1px solid var(--border);
+      color: var(--muted); vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody td:first-child { color: var(--ink); font-weight: 500; }
+
+    /* ─── TWO-COL ─── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 680px) { .two-col { grid-template-columns: 1fr; } }
+
+    /* ─── CHECK LIST ─── */
+    .checklist { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .checklist li {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 0.9375rem; color: var(--muted);
+    }
+    .checklist li .icon { flex-shrink: 0; margin-top: 2px; }
+    .checklist li .icon.pass { color: var(--green); }
+    .checklist li .icon.fail { color: var(--red); }
+    .checklist li .icon.warn { color: var(--yellow); }
+    .checklist li strong { color: var(--ink); }
+
+    /* ─── POSITIVE CARD ─── */
+    .positives {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;
+    }
+    .positive-card {
+      background: rgba(34,197,94,.04); border: 1px solid rgba(34,197,94,.15);
+      border-radius: var(--radius); padding: 16px 18px;
+    }
+    .positive-card h4 { font-size: 0.875rem; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+    .positive-card p  { font-size: 0.8125rem; color: var(--muted); line-height: 1.65; }
+
+    /* ─── PRIORITY LIST ─── */
+    .priority-list { display: flex; flex-direction: column; gap: 16px; }
+    .priority-item {
+      display: flex; gap: 16px; align-items: flex-start;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px 20px;
+    }
+    .priority-num {
+      flex-shrink: 0; width: 28px; height: 28px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-family: "SF Mono", monospace; font-size: 0.75rem; font-weight: 700; color: var(--accent);
+    }
+    .priority-item h4 { font-size: 0.9375rem; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+    .priority-item p  { font-size: 0.875rem; color: var(--muted); line-height: 1.7; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border); padding: 32px 24px;
+      text-align: center;
+    }
+    footer p { font-size: 0.8125rem; color: var(--subtle); }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ─── DIVIDER ─── */
+    .amber-rule { width: 44px; height: 2px; background: var(--accent); margin-bottom: 20px; }
+
+    /* ─── TOC ─── */
+    .toc {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 24px; margin-bottom: 40px;
+    }
+    .toc h3 {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.625rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--subtle); margin-bottom: 12px;
+    }
+    .toc ol { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .toc li { display: flex; align-items: center; gap: 8px; }
+    .toc a { font-size: 0.875rem; color: var(--muted); text-decoration: none; }
+    .toc a:hover { color: var(--ink); }
+    .toc .num {
+      font-family: "SF Mono", monospace; font-size: 0.6875rem;
+      color: var(--subtle); min-width: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <a href="https://villarejo.in" class="logo">M<span>V</span></a>
+      <span class="meta">design-critique · villarejo.in · 2026-05-23</span>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="eyebrow">Design Critique</p>
+    <h1>villarejo.in</h1>
+    <p class="hero-desc">
+      Structured UX &amp; design quality review of Manuel Villarejo's personal portfolio site —
+      a Next.js 14 single-page app built for an IT Director &amp; Enterprise Engineering Leader.
+      Covers usability, hierarchy, accessibility, consistency, and motion.
+    </p>
+  </div>
+
+  <!-- SCORE BAND -->
+  <div class="score-band">
+    <div class="overall">
+      <div class="overall-score">8.1</div>
+      <div class="overall-meta">
+        <h2>Solid — ship-ready with targeted fixes</h2>
+        <p>Strong visual identity, exceptional typography, and polished animation. The biggest gaps are in accessibility and navigation coverage. None are blockers, but three are P1 priority.</p>
+      </div>
+    </div>
+    <div class="score-grid" style="margin-top:24px">
+      <div class="score-card">
+        <div class="label">First Impression</div>
+        <div class="value c-green">9<span class="out-of"> /10</span></div>
+        <div class="bar"><div class="bar-fill bg-green" style="width:90%"></div></div>
+      </div>
+      <div class="score-card">
+        <div class="label">Usability</div>
+        <div class="value c-yellow">7<span class="out-of"> /10</span></div>
+        <div class="bar"><div class="bar-fill bg-yellow" style="width:70%"></div></div>
+      </div>
+      <div class="score-card">
+        <div class="label">Visual Hierarchy</div>
+        <div class="value c-green">8.5<span class="out-of"> /10</span></div>
+        <div class="bar"><div class="bar-fill bg-green" style="width:85%"></div></div>
+      </div>
+      <div class="score-card">
+        <div class="label">Consistency</div>
+        <div class="value c-green">8<span class="out-of"> /10</span></div>
+        <div class="bar"><div class="bar-fill bg-green" style="width:80%"></div></div>
+      </div>
+      <div class="score-card">
+        <div class="label">Accessibility</div>
+        <div class="value c-orange">6<span class="out-of"> /10</span></div>
+        <div class="bar"><div class="bar-fill bg-orange" style="width:60%"></div></div>
+      </div>
+      <div class="score-card">
+        <div class="label">Motion Design</div>
+        <div class="value c-green">9<span class="out-of"> /10</span></div>
+        <div class="bar"><div class="bar-fill bg-green" style="width:90%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main>
+    <div class="wrap">
+
+      <!-- TOC -->
+      <div class="toc">
+        <h3>Contents</h3>
+        <ol>
+          <li><span class="num">01</span><a href="#impression">First Impression</a></li>
+          <li><span class="num">02</span><a href="#usability">Usability</a></li>
+          <li><span class="num">03</span><a href="#hierarchy">Visual Hierarchy</a></li>
+          <li><span class="num">04</span><a href="#consistency">Consistency</a></li>
+          <li><span class="num">05</span><a href="#accessibility">Accessibility</a></li>
+          <li><span class="num">06</span><a href="#motion">Motion Design</a></li>
+          <li><span class="num">07</span><a href="#positives">What Works Well</a></li>
+          <li><span class="num">08</span><a href="#priorities">Priority Recommendations</a></li>
+        </ol>
+      </div>
+
+      <!-- 1. FIRST IMPRESSION -->
+      <section class="critique" id="impression">
+        <div class="amber-rule"></div>
+        <p class="eyebrow">01</p>
+        <h2 class="section-title">First Impression</h2>
+        <p class="section-intro">What lands in the first 2 seconds — emotional reaction, purpose clarity, and primary attention anchor.</p>
+
+        <div class="findings">
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Immediate emotional read</span>
+              <span class="badge badge-ok">Positive</span>
+            </div>
+            <p>The hero is arresting. The oversized Bricolage Grotesque name at <code>clamp(4rem, 11vw, 9.5rem)</code> with animated amber SVG paths in the background creates a confident, premium first impression. The grain overlay at <code>opacity: 0.032</code> adds material texture without being heavy. The amber accent colour (<code>#F59E0B</code>) reads as authoritative and distinctive — unusual enough to stand out among IT-sector portfolios that default to blue.</p>
+            <p>The purpose is clear within 2 seconds: this is a named person, in a senior leadership role, and they want you to scroll or get in touch. The scroll indicator (magic-mouse oval with animated dot) is a nice functional cue that doesn't crowd the composition.</p>
+          </div>
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Subtitle weight relative to name</span>
+              <span class="badge badge-p3">P3 — Minor</span>
+            </div>
+            <p>The subtitle <em>"IT Director &amp; Enterprise Engineering Leader"</em> renders at <code>clamp(1rem, 2.2vw, 1.45rem)</code> — roughly 5–6× smaller than the name. On wide viewports the contrast in scale is extreme. The role declaration could sit at a slightly larger minimum to ensure legibility on mobile (where 1rem at 15px can feel thin below a 64px name).</p>
+            <div class="fix-block">
+              <div class="fix-label">Recommendation</div>
+              <p>Change the min clamp value from <code>1rem</code> to <code>1.125rem</code> in <code>background-paths.tsx:149</code>. The visual contrast remains dramatic but the subtitle becomes more readable on small phones.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. USABILITY -->
+      <section class="critique" id="usability">
+        <div class="amber-rule"></div>
+        <p class="eyebrow">02</p>
+        <h2 class="section-title">Usability</h2>
+        <p class="section-intro">Can the user accomplish their goal? Navigation reach, interactive affordances, and task completion.</p>
+
+        <div class="findings">
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Navigation doesn't link to all sections</span>
+              <span class="badge badge-p1">P1 — High</span>
+            </div>
+            <p>The nav links array in <code>nav.tsx:7-12</code> only exposes four anchors: <code>#experience</code>, <code>#education</code>, <code>#skills</code>, <code>#about</code>. Two fully-implemented sections — <strong>Tech Stack</strong> (<code>id="tech"</code>) and <strong>Certifications</strong> (<code>id="certifications"</code>) — are unreachable from the navigation.</p>
+            <p>A recruiter or hiring manager scanning the site via nav clicks will never see the tech logos or professional credentials. These are high-signal sections for an IT Director audience.</p>
+            <div class="fix-block">
+              <div class="fix-label">Recommendation</div>
+              <p>Add both anchors to the nav links array, or group them under a "More" dropdown to keep the header uncluttered. At minimum, add <code>#certifications</code> since credentials are P1 content for this persona.</p>
+              <pre><span class="cm">// nav.tsx:7</span>
+<span class="kw">const</span> links = [
+  { href: <span class="str">"#experience"</span>,    label: <span class="str">"Experience"</span>    },
+  { href: <span class="str">"#education"</span>,     label: <span class="str">"Education"</span>     },
+  { href: <span class="str">"#skills"</span>,        label: <span class="str">"Skills"</span>        },
+  { href: <span class="str">"#tech"</span>,          label: <span class="str">"Tech Stack"</span>    }, <span class="cm">// ← add</span>
+  { href: <span class="str">"#certifications"</span>, label: <span class="str">"Credentials"</span>   }, <span class="cm">// ← add</span>
+  { href: <span class="str">"#about"</span>,         label: <span class="str">"About"</span>         },
+];</pre>
+            </div>
+          </div>
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Duplicate CTA — email link + "Email Directly" button</span>
+              <span class="badge badge-p2">P2 — Moderate</span>
+            </div>
+            <p>In <code>contact.tsx</code>, the email address is presented as a large clickable link (<code>line 34-41</code>) and then repeated as the primary button "Email Directly" (<code>line 44-46</code>) — both pointing to the same <code>mailto:</code>. This creates redundancy and slightly dilutes the clarity of the CTA hierarchy.</p>
+            <div class="fix-block">
+              <div class="fix-label">Recommendation</div>
+              <p>Keep the animated underline email link as the visual statement, and change the primary button to something additive — e.g. "Download CV" (if a PDF is available) or remove the duplicate button entirely and keep only the LinkedIn button as the secondary action.</p>
+            </div>
+          </div>
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Timeline mobile layout untested at narrow widths</span>
+              <span class="badge badge-p2">P2 — Moderate</span>
+            </div>
+            <p>The Experience timeline uses a fixed three-column grid in <code>experience.tsx:178</code>: <code style="white-space:nowrap">gridTemplateColumns: "1fr 44px 1fr"</code>. No responsive override exists. At 360px viewport width, each content column is only ~158px wide with 6px padding — enough for a role title but barely for the bullet text (max-width is <code>52ch</code>, which renders as overflow-triggering word-wrap).</p>
+            <p>The alternating left/right pattern also means half the content is in an unexpected position on first glance for a mobile user who's used to single-column timelines.</p>
+            <div class="fix-block">
+              <div class="fix-label">Recommendation</div>
+              <p>Below <code>md</code>, collapse to a single-column timeline: the dot moves to the left edge, all cards stack in one column. This is a known responsive pattern for alternating timelines.</p>
+              <pre><span class="cm">/* At sm breakpoint */</span>
+<span class="at">@media</span> (max-width: <span class="num">768px</span>) {
+  .timeline-item {
+    grid-template-columns: <span class="num">20px</span> <span class="num">1fr</span>; <span class="cm">/* dot | content */</span>
+  }
+}</pre>
+            </div>
+          </div>
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Mobile menu lacks visual close affordance</span>
+              <span class="badge badge-p3">P3 — Minor</span>
+            </div>
+            <p>The mobile hamburger correctly transforms to an ✕ on open (via CSS rotation in <code>nav.tsx:68-70</code>), but the ✕ is 20×20px at <code>muted</code> colour. At <code>rgba</code>-based muted the contrast may be marginal. Additionally, there's no label change on the button from "Toggle navigation" when open — a screenreader would not know the current state is "close".</p>
+            <div class="fix-block">
+              <div class="fix-label">Recommendation</div>
+              <p>Add a dynamic <code>aria-label</code>: <code>open ? "Close navigation" : "Open navigation"</code>. Also consider bumping the ✕ size to 22×22px or using a slightly brighter colour in the open state.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 3. VISUAL HIERARCHY -->
+      <section class="critique" id="hierarchy">
+        <div class="amber-rule"></div>
+        <p class="eyebrow">03</p>
+        <h2 class="section-title">Visual Hierarchy</h2>
+        <p class="section-intro">Is there a clear reading order? Are the right elements emphasised? Does whitespace work?</p>
+
+        <div class="findings">
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Reading flow across sections is excellent</span>
+              <span class="badge badge-ok">Positive</span>
+            </div>
+            <p>Every section follows the same eyebrow → H2 → body text → content pattern. The eyebrow uses <code>font-mono</code> at <code>0.6875rem</code> in <code>text-accent-hi</code> — it reads as a category label, not competing with the headline. The H2 uses <code>clamp</code> sizing that scales beautifully between mobile and desktop.</p>
+            <p>The amber rule (<code>w-11 h-0.5</code>) in the hero creates a crisp visual anchor between name and subtitle — a small detail with high compositional impact.</p>
+          </div>
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Hero name at 9.5rem risks ultra-wide overflow intent</span>
+              <span class="badge badge-p3">P3 — Minor</span>
+            </div>
+            <p>At viewport widths above ~1400px, <code>clamp(4rem, 11vw, 9.5rem)</code> hits the 9.5rem ceiling — 152px. "VILLAREJO" at this size wraps to two lines on viewports below ~900px wide but the clamp minimum (4rem = 64px) kicks in before that. The transition is handled, but on a 1920px display the name is capped at 152px while the available canvas is 1100px — a large whitespace gap appears left and right of the name block which reads as unintentional.</p>
+            <div class="fix-block">
+              <div class="fix-label">Recommendation</div>
+              <p>Increase the max clamp value to <code>10.5rem</code> or <code>11rem</code> so the name fills more of the available width on large monitors. Alternatively, set a max-width on the hero content block to create deliberate left-side framing.</p>
+            </div>
+          </div>
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">About section image aspect ratio 21:8 is landscape-extreme</span>
+              <span class="badge badge-p3">P3 — Minor</span>
+            </div>
+            <p>The panoramic image in <code>about.tsx:10-24</code> uses a <code>21 / 8</code> aspect ratio — approximately 2.6:1. On mobile where the image is <code>100vw</code>, this renders as only ~135px tall on a 360px screen. The vignette gradient helps it blend, but the image contributes very little visual content at that height and may look unintentional.</p>
+            <div class="fix-block">
+              <div class="fix-label">Recommendation</div>
+              <p>Use a responsive aspect ratio — e.g. <code>21/8</code> on desktop, <code>16/9</code> on mobile — via a Tailwind <code>aspect-[16/9] md:aspect-[21/8]</code> approach.</p>
+            </div>
+          </div>
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Skills tag grid could benefit from visual grouping emphasis</span>
+              <span class="badge badge-p3">P3 — Minor</span>
+            </div>
+            <p>The five skill groups in <code>skills.tsx</code> use a 3-column grid with equal visual weight. The "Emerging Technologies" group (AI, agentic tools) is arguably the highest-signal differentiator for this profile — but there's no visual way to distinguish its importance from "Leadership &amp; Operations".</p>
+            <div class="fix-block">
+              <div class="fix-label">Recommendation</div>
+              <p>Consider adding a subtle <code>border-accent/20</code> or a faint amber glow on the "Emerging Technologies" card to signal it as a current-focus area. Or reorder the groups so it appears first or last (currently it's 5th).</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 4. CONSISTENCY -->
+      <section class="critique" id="consistency">
+        <div class="amber-rule"></div>
+        <p class="eyebrow">04</p>
+        <h2 class="section-title">Consistency</h2>
+        <p class="section-intro">Design system adherence — spacing, colour, typography, and behavioural patterns across sections.</p>
+
+        <div class="findings">
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Section bottom margin inconsistency across H2 blocks</span>
+              <span class="badge badge-p2">P2 — Moderate</span>
+            </div>
+            <p>After the section subtitle paragraph (the descriptive line beneath each H2), margin-bottom is inconsistent:</p>
+            <div class="tbl-wrap" style="margin-top:12px">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Section</th>
+                    <th>Subtitle margin-bottom</th>
+                    <th>File</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Experience</td><td><code>mb-16</code> (64px)</td><td>experience.tsx:271</td></tr>
+                  <tr><td>Skills</td><td><code>mb-16</code> (64px)</td><td>skills.tsx:107</td></tr>
+                  <tr><td>Tech Stack</td><td><code>mb-14</code> (56px)</td><td>tech-stack.tsx:91</td></tr>
+                  <tr><td>Contact</td><td><code>mb-8</code> (32px)</td><td>contact.tsx:30</td></tr>
+                  <tr><td>Education</td><td>No subtitle — H2 is <code>mb-10</code> (40px)</td><td>education.tsx:70</td></tr>
+                  <tr><td>Certifications</td><td>No subtitle — H2 is <code>mb-12</code> (48px)</td><td>certifications.tsx:52</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="fix-block">
+              <div class="fix-label">Recommendation</div>
+              <p>Standardise to <code>mb-16</code> (64px) after the subtitle paragraph in all sections that have one. For sections without a subtitle, standardise H2 bottom margin to <code>mb-14</code> or <code>mb-16</code>.</p>
+            </div>
+          </div>
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Section padding rhythm is consistent and well-executed</span>
+              <span class="badge badge-ok">Positive</span>
+            </div>
+            <p>Every section uses <code>py-24 md:py-32</code> or <code>py-28 md:py-40</code> — there are only two tiers, which creates a predictable breathing rhythm. Background alternation (sections with <code>bg-surface</code> vs transparent) is used effectively to separate content without hard borders.</p>
+          </div>
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Inline hex colours alongside CSS tokens</span>
+              <span class="badge badge-p3">P3 — Minor</span>
+            </div>
+            <p>Most colour usage correctly references Tailwind tokens (e.g. <code>text-accent</code>, <code>border-[var(--border-subtle)]</code>), but some spots use raw hex directly:</p>
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:4px; margin-top:8px; font-size:0.875rem; color:var(--muted);">
+              <li><code>stroke="#F59E0B"</code> in <code>background-paths.tsx:32</code> — should be <code>stroke="var(--accent)"</code></li>
+              <li><code>backgroundColor: "#F59E0B"</code> in <code>experience.tsx:200</code> — framer-motion animate prop</li>
+              <li><code>const AMBER = "#f59e0b"</code> in <code>tech-stack.tsx:9</code> — used for CDN URL construction (acceptable here)</li>
+            </ul>
+            <div class="fix-block">
+              <div class="fix-label">Recommendation</div>
+              <p>Use <code>var(--accent)</code> wherever CSS variables are supported. For Framer Motion's <code>animate</code> object, define the hex once as a constant from a shared tokens file to keep a single source of truth.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 5. ACCESSIBILITY -->
+      <section class="critique" id="accessibility">
+        <div class="amber-rule"></div>
+        <p class="eyebrow">05</p>
+        <h2 class="section-title">Accessibility</h2>
+        <p class="section-intro">WCAG 2.1 AA checklist — contrast, keyboard navigation, ARIA, reduced motion.</p>
+
+        <div class="findings">
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">No skip navigation link</span>
+              <span class="badge badge-p0">P0 — Critical</span>
+            </div>
+            <p>WCAG 2.4.1 (Bypass Blocks, Level A) requires a mechanism to skip repeated navigation. There is no <code>&lt;a href="#main-content"&gt;Skip to content&lt;/a&gt;</code> link at the top of the document. Keyboard-only users must tab through all 6 nav links on every page load before reaching any content.</p>
+            <div class="fix-block">
+              <div class="fix-label">Fix — add to layout.tsx</div>
+              <pre><span class="cm">// app/layout.tsx — inside &lt;body&gt;, before {children}</span>
+<span class="tag">&lt;a</span>
+  <span class="at">href</span>=<span class="str">"#main-content"</span>
+  <span class="at">className</span>=<span class="str">"sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4
+             focus:z-[9999] focus:bg-accent focus:text-bg focus:px-4
+             focus:py-2 focus:rounded-[3px] focus:font-medium"</span>
+<span class="tag">&gt;</span>
+  Skip to main content
+<span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;main</span> <span class="at">id</span>=<span class="str">"main-content"</span><span class="tag">&gt;</span>{children}<span class="tag">&lt;/main&gt;</span></pre>
+            </div>
+          </div>
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Mobile menu overlay missing ARIA role and focus trap</span>
+              <span class="badge badge-p1">P1 — High</span>
+            </div>
+            <p>The full-screen mobile menu in <code>nav.tsx:77-96</code> is a <code>&lt;motion.div&gt;</code> with no <code>role="dialog"</code>, no <code>aria-modal="true"</code>, and no focus trap. When opened, keyboard focus continues flowing into content behind the overlay. A screenreader user pressing Tab will navigate into invisible page content.</p>
+            <div class="fix-block">
+              <div class="fix-label">Recommendation</div>
+              <p>Add <code>role="dialog" aria-modal="true" aria-label="Navigation menu"</code> to the overlay div. Implement a focus trap (e.g. <code>focus-trap-react</code> or manual <code>tabIndex</code> management). Move focus to the first menu item on open, and return focus to the burger button on close.</p>
+            </div>
+          </div>
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">Colour contrast — small text at text-subtle</span>
+              <span class="badge badge-p1">P1 — High</span>
+            </div>
+            <p><code>--subtle: #5c5651</code> on <code>--bg: #0f0e0c</code> yields a contrast ratio of approximately <strong>3.8:1</strong>. WCAG AA requires 4.5:1 for normal text (<18px / not bold). This token is used for:</p>
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:4px; margin-top:8px; font-size:0.875rem; color:var(--muted);">
+              <li>• Certification years (<code>certifications.tsx:32</code>) — <code>font-mono text-[0.6875rem]</code></li>
+              <li>• Tech stack labels (<code>tech-stack.tsx:109</code>) — <code>font-mono text-[0.5625rem]</code></li>
+              <li>• Education location (<code>education.tsx:49</code>) — <code>text-[0.8125rem]</code></li>
+              <li>• About language level (<code>about.tsx:51</code>) — <code>font-mono text-[0.6875rem]</code></li>
+            </ul>
+            <p style="margin-top:8px">All of these are below 14px (the threshold where Bold at 4.5:1 relaxes to 3:1 for large text). They fail WCAG AA.</p>
+            <div class="fix-block">
+              <div class="fix-label">Recommendation</div>
+              <p>Lighten <code>--subtle</code> to approximately <code>#706b65</code> (contrast ≈ 4.6:1 on <code>#0f0e0c</code>) or bump these specific instances to use <code>text-muted</code> (<code>#9b9488</code>, ratio ≈ 7.2:1). The visual change is minimal — one step up the grey scale.</p>
+            </div>
+          </div>
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">useReducedMotion correctly respected in hero</span>
+              <span class="badge badge-ok">Positive</span>
+            </div>
+            <p><code>background-paths.tsx:6-8</code> checks <code>useReducedMotion()</code> and disables the animated SVG paths when the OS prefers reduced motion. This is excellent WCAG 2.3.3 (Animation from Interactions) compliance. However, the per-letter hero text animation (48 motion.span elements) and all other <code>useInView</code>-triggered animations across sections do <em>not</em> check this preference.</p>
+            <div class="fix-block">
+              <div class="fix-label">Recommendation</div>
+              <p>Add a global reduced-motion variant. The cleanest approach: set <code>initial</code> and <code>animate</code> to the same value when <code>prefersReducedMotion</code> is true, or use the CSS <code>@media (prefers-reduced-motion: reduce)</code> approach alongside Framer's <code>LazyMotion</code>.</p>
+            </div>
+          </div>
+
+          <div class="finding">
+            <div class="finding-header">
+              <span class="finding-title">LinkedIn button opens in new tab — no announcement</span>
+              <span class="badge badge-p2">P2 — Moderate</span>
+            </div>
+            <p>The LinkedIn anchor in <code>contact.tsx:48-55</code> has <code>target="_blank"</code> but no <code>aria-label</code> indicating the new-tab behaviour. Screenreader users are typically unaware a new tab opened. The <code>↗</code> glyph is decorative and has no accessible text equivalent.</p>
+            <div class="fix-block">
+              <div class="fix-label">Recommendation</div>
+              <p>Add <code>aria-label="LinkedIn profile (opens in new tab)"</code> to the link. This satisfies WCAG 2.4.4 (Link Purpose) and communicates context to screenreader users.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Contrast audit table -->
+        <div style="margin-top:28px">
+          <p style="font-family:monospace;font-size:0.625rem;letter-spacing:.1em;text-transform:uppercase;color:var(--subtle);margin-bottom:12px">Contrast Audit — Key Pairings</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr><th>Foreground</th><th>Background</th><th>Ratio</th><th>Usage</th><th>AA (4.5:1)</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>#f0ece6</code> ink</td><td><code>#0f0e0c</code> bg</td><td>16.1:1</td><td>Body text, headings</td><td><span class="badge badge-p3">PASS</span></td></tr>
+                <tr><td><code>#9b9488</code> muted</td><td><code>#0f0e0c</code> bg</td><td>7.2:1</td><td>Secondary text</td><td><span class="badge badge-p3">PASS</span></td></tr>
+                <tr><td><code>#f59e0b</code> accent</td><td><code>#0f0e0c</code> bg</td><td>8.1:1</td><td>Accent text, nav CTA</td><td><span class="badge badge-p3">PASS</span></td></tr>
+                <tr><td><code>#5c5651</code> subtle</td><td><code>#0f0e0c</code> bg</td><td>3.8:1</td><td>Dates, tech labels, location</td><td><span class="badge badge-p1">FAIL</span></td></tr>
+                <tr><td><code>#f0ece6</code> ink</td><td><code>#161512</code> surface</td><td>14.9:1</td><td>Section text on surface bg</td><td><span class="badge badge-p3">PASS</span></td></tr>
+                <tr><td><code>#f59e0b</code> accent</td><td><code>#161512</code> surface</td><td>7.5:1</td><td>Cert distinction badge</td><td><span class="badge badge-p3">PASS</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. MOTION DESIGN -->
+      <section class="critique" id="motion">
+        <div class="amber-rule"></div>
+        <p class="eyebrow">06</p>
+        <h2 class="section-title">Motion Design</h2>
+        <p class="section-intro">Animation quality, purposefulness, and performance characteristics.</p>
+
+        <ul class="checklist" style="margin-bottom:24px">
+          <li>
+            <span class="icon pass">✓</span>
+            <span><strong>Hero letter-by-letter entrance.</strong> 48 <code>motion.span</code> elements with staggered spring animation. Delay offset of 0.028s per letter creates a clean cascade without feeling slow. Spring params (stiffness 130, damping 22) feel natural.</span>
+          </li>
+          <li>
+            <span class="icon pass">✓</span>
+            <span><strong>Animated SVG paths in hero background.</strong> 48 paths × 2 directions, GPU-composited. Paused via <code>useInView(once: false)</code> when hero scrolls out — excellent GPU management. Each path gets a unique duration (22s + id×0.4s) so they desync naturally.</span>
+          </li>
+          <li>
+            <span class="icon pass">✓</span>
+            <span><strong>Timeline scroll-spy active state.</strong> The spring-animated scale + amber dot glow is satisfying. Using <code>42%</code> of viewport height as the target creates a natural focal point that feels intentional.</span>
+          </li>
+          <li>
+            <span class="icon pass">✓</span>
+            <span><strong>Staggered section reveals.</strong> Consistent <code>opacity: 0 → 1, y: 14 → 0</code> entrance with <code>once: true</code> scroll trigger. Delays are short (0.045–0.1s per item) — doesn't feel artificially slow.</span>
+          </li>
+          <li>
+            <span class="icon warn">⚠</span>
+            <span><strong>48 animated paths in hero run indefinitely.</strong> Even with the <code>heroInView</code> pause, on low-end devices 48 concurrent SVG path animations may cause jank. Consider reducing to 32 paths or using <code>will-change: opacity</code> on the SVG container (<code>background-paths.tsx:24</code>).</span>
+          </li>
+          <li>
+            <span class="icon warn">⚠</span>
+            <span><strong>Per-letter animation doesn't respect <code>prefers-reduced-motion</code>.</strong> The 96 <code>motion.span</code> elements (first + last name) animate regardless of OS accessibility settings. See Accessibility section for fix.</span>
+          </li>
+          <li>
+            <span class="icon pass">✓</span>
+            <span><strong>Scroll indicator is elegantly minimal.</strong> The magic-mouse oval with amber bouncing dot (<code>background-paths.tsx:167-197</code>) uses a custom <code>[0.45, 0, 0.55, 1]</code> easing with <code>repeatDelay: 0.3</code>. Subtle but communicative.</span>
+          </li>
+          <li>
+            <span class="icon pass">✓</span>
+            <span><strong>Mobile menu transition.</strong> <code>opacity: 0 → 1, y: -6 → 0</code> at 0.22s with a Material Design easing curve <code>[0.4, 0, 0.2, 1]</code>. Fast enough to feel snappy, slow enough to feel polished.</span>
+          </li>
+        </ul>
+
+        <div class="finding">
+          <div class="finding-header">
+            <span class="finding-title">Hero grain overlay is position:fixed from within a section component</span>
+            <span class="badge badge-p2">P2 — Moderate</span>
+          </div>
+          <p>The film grain overlay in <code>background-paths.tsx:101-109</code> is a <code>position:fixed, z-50</code> div rendered inside the <code>HeroPaths</code> component. This means it's mounted when the Hero component mounts and unmounted when it unmounts (though with Next.js it's persistent throughout the SPA session). The architectural concern: it applies globally across all scroll positions, but it's owned by the Hero — a future developer might remove the Hero and accidentally remove the grain from the whole page.</p>
+          <div class="fix-block">
+            <div class="fix-label">Recommendation</div>
+            <p>Move the grain overlay to <code>app/layout.tsx</code> so it's explicitly global. It's a 1-line move and removes the implicit coupling between Hero and the page-level texture.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. WHAT WORKS WELL -->
+      <section class="critique" id="positives">
+        <div class="amber-rule"></div>
+        <p class="eyebrow">07</p>
+        <h2 class="section-title">What Works Well</h2>
+        <p class="section-intro">Genuine strengths worth preserving through any future iteration.</p>
+
+        <div class="positives">
+          <div class="positive-card">
+            <h4>Typography system</h4>
+            <p>Bricolage Grotesque / Hanken Grotesk / Fira Code is an unusual and cohesive triple stack. Display, body, and mono each serve distinct roles with no overlap. The tight letter-spacing on Bricolage (<code>-0.035em</code> at hero scale) is expertly calibrated.</p>
+          </div>
+          <div class="positive-card">
+            <h4>Amber accent colour</h4>
+            <p><code>#F59E0B</code> is warm, high-contrast, and distinctive. Used precisely: accent text, dots, borders — never as a fill on large surfaces. The glow ring on the active timeline dot (<code>rgba(245,158,11,0.18)</code> at 5px spread) is elegant.</p>
+          </div>
+          <div class="positive-card">
+            <h4>Timeline scroll-spy</h4>
+            <p>The active highlight system using closest-center-to-42%-viewport is genuinely delightful UX. It creates a reading assistant effect — the site responds to your scroll position and guides attention without being intrusive.</p>
+          </div>
+          <div class="positive-card">
+            <h4>Token-based colour system</h4>
+            <p>The CSS variable approach with semantic names (<code>--ink</code>, <code>--muted</code>, <code>--subtle</code>, <code>--accent</code>, <code>--bg</code>, <code>--surface</code>) is clean and maintainable. Warm-tinted darks (<code>#0f0e0c</code> vs a cold <code>#111111</code>) give the palette character.</p>
+          </div>
+          <div class="positive-card">
+            <h4>Monospace label pattern</h4>
+            <p>Using Fira Code for dates, labels, and section eyebrows creates a professional, systematic feel — appropriate for an engineering/IT persona. The <code>tracking-[0.12em]</code> + uppercase treatment at <code>0.6875rem</code> is precisely right.</p>
+          </div>
+          <div class="positive-card">
+            <h4>Tech stack fallback UX</h4>
+            <p><code>tech-stack.tsx</code> gracefully handles failed CDN logo loads with an <code>onError</code> handler that falls back to a mono text abbreviation. This is production-quality resilience — most portfolios just show broken images.</p>
+          </div>
+          <div class="positive-card">
+            <h4>Imperial MBA distinction badge</h4>
+            <p>The <code>with Distinction</code> tag in <code>education.tsx:51</code> uses an amber border/text treatment that draws exactly the right amount of attention — notable without shouting. A small but high-impact design decision.</p>
+          </div>
+          <div class="positive-card">
+            <h4>Hero GPU management</h4>
+            <p>Pausing the 48-path SVG animation when the hero scrolls out of view (<code>useInView(once: false)</code>) shows performance awareness beyond what most portfolio sites implement. Extends battery life on mobile.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. PRIORITY RECOMMENDATIONS -->
+      <section class="critique" id="priorities">
+        <div class="amber-rule"></div>
+        <p class="eyebrow">08</p>
+        <h2 class="section-title">Priority Recommendations</h2>
+        <p class="section-intro">Ordered by impact and effort. P0 and P1 items should be resolved before the site is widely shared.</p>
+
+        <div class="priority-list">
+
+          <div class="priority-item">
+            <div class="priority-num">1</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <h4>Add skip navigation link</h4>
+                <span class="badge badge-p0">P0</span>
+              </div>
+              <p>WCAG Level A requirement. Add a visually hidden, focusable skip link at the top of <code>layout.tsx</code> that targets <code>#main-content</code>. 5-minute fix, maximum accessibility impact. An IT Director recruiting for a team is likely to screen their own site for accessibility signals.</p>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">2</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <h4>Fix subtle colour contrast failure</h4>
+                <span class="badge badge-p1">P1</span>
+              </div>
+              <p>Lighten <code>--subtle</code> from <code>#5c5651</code> to <code>#706b65</code> in your globals.css. This brings the token to a 4.6:1 ratio — passing WCAG AA — while preserving the warm grey aesthetic. Affects certification years, tech labels, and location text.</p>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">3</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <h4>Add Certifications and Tech Stack to nav</h4>
+                <span class="badge badge-p1">P1</span>
+              </div>
+              <p>Two fully-implemented sections are invisible to visitors who use the nav for orientation — which is most desktop users. Credentials and tech stack are exactly what a CTO or board member scans for in an IT Director portfolio. Add both anchors to <code>nav.tsx</code>. 10-minute change.</p>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">4</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <h4>ARIA + focus trap for mobile menu</h4>
+                <span class="badge badge-p1">P1</span>
+              </div>
+              <p>Add <code>role="dialog"</code>, <code>aria-modal="true"</code>, and a focus trap to the full-screen mobile menu overlay. This ensures keyboard and screenreader users can navigate the menu safely and that focus doesn't bleed through to hidden content.</p>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">5</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <h4>Make timeline responsive on mobile</h4>
+                <span class="badge badge-p2">P2</span>
+              </div>
+              <p>Collapse the 3-column alternating timeline to a 2-column (dot + content) layout below <code>md</code> breakpoint. The current implementation forces 2×158px content columns on a 360px screen, making bullet text tight. This is the most involved fix but the timeline is the most important section of the portfolio.</p>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">6</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <h4>Remove duplicate email CTA</h4>
+                <span class="badge badge-p2">P2</span>
+              </div>
+              <p>The email address link and "Email Directly" button both go to the same <code>mailto:</code>. Replace the primary button with an additive action (CV download, or just remove it) so the two CTAs have clear differentiated purpose.</p>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">7</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <h4>Respect prefers-reduced-motion in all animations</h4>
+                <span class="badge badge-p2">P2</span>
+              </div>
+              <p>The SVG paths already respect this — apply the same logic to per-letter hero entrance, scroll-triggered section reveals, and the timeline scale animations. A single global hook or Framer Motion <code>LazyMotion</code> config covers all cases.</p>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">8</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <h4>Move grain overlay to layout.tsx</h4>
+                <span class="badge badge-p2">P2</span>
+              </div>
+              <p>Architectural cleanup: the fixed-position grain div is currently inside <code>HeroPaths</code>. Extract it to <code>layout.tsx</code> so its global scope is explicit. This prevents a future regression if the Hero component is ever refactored or replaced.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Summary table -->
+        <div style="margin-top:40px">
+          <p style="font-family:monospace;font-size:0.625rem;letter-spacing:.1em;text-transform:uppercase;color:var(--subtle);margin-bottom:14px">All Findings Summary</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr><th>#</th><th>Finding</th><th>Severity</th><th>Effort</th><th>File(s)</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>1</td><td>Missing skip navigation link</td><td><span class="badge badge-p0">P0</span></td><td>5 min</td><td>layout.tsx</td></tr>
+                <tr><td>2</td><td>text-subtle fails contrast AA</td><td><span class="badge badge-p1">P1</span></td><td>2 min</td><td>globals.css</td></tr>
+                <tr><td>3</td><td>Nav missing 2 sections</td><td><span class="badge badge-p1">P1</span></td><td>5 min</td><td>nav.tsx</td></tr>
+                <tr><td>4</td><td>Mobile menu no ARIA / focus trap</td><td><span class="badge badge-p1">P1</span></td><td>30 min</td><td>nav.tsx</td></tr>
+                <tr><td>5</td><td>Timeline not responsive</td><td><span class="badge badge-p2">P2</span></td><td>2h</td><td>experience.tsx</td></tr>
+                <tr><td>6</td><td>Duplicate email CTA</td><td><span class="badge badge-p2">P2</span></td><td>10 min</td><td>contact.tsx</td></tr>
+                <tr><td>7</td><td>prefers-reduced-motion not global</td><td><span class="badge badge-p2">P2</span></td><td>1h</td><td>background-paths.tsx + all sections</td></tr>
+                <tr><td>8</td><td>Grain overlay in wrong component</td><td><span class="badge badge-p2">P2</span></td><td>10 min</td><td>background-paths.tsx → layout.tsx</td></tr>
+                <tr><td>9</td><td>LinkedIn new-tab ARIA</td><td><span class="badge badge-p2">P2</span></td><td>2 min</td><td>contact.tsx</td></tr>
+                <tr><td>10</td><td>Section subtitle margin inconsistency</td><td><span class="badge badge-p2">P2</span></td><td>15 min</td><td>all sections</td></tr>
+                <tr><td>11</td><td>Mobile menu ✕ button aria-label</td><td><span class="badge badge-p3">P3</span></td><td>2 min</td><td>nav.tsx</td></tr>
+                <tr><td>12</td><td>Hero subtitle clamp min too small</td><td><span class="badge badge-p3">P3</span></td><td>2 min</td><td>background-paths.tsx:149</td></tr>
+                <tr><td>13</td><td>About image aspect ratio on mobile</td><td><span class="badge badge-p3">P3</span></td><td>5 min</td><td>about.tsx</td></tr>
+                <tr><td>14</td><td>Inline hex colours vs tokens</td><td><span class="badge badge-p3">P3</span></td><td>10 min</td><td>background-paths.tsx, experience.tsx</td></tr>
+                <tr><td>15</td><td>Emerging Tech group visual weight</td><td><span class="badge badge-p3">P3</span></td><td>10 min</td><td>skills.tsx</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </div><!-- /.wrap -->
+  </main>
+
+  <footer>
+    <p>Design critique for <a href="https://villarejo.in">villarejo.in</a> · Generated 2026-05-23 · Claude Sonnet 4.6</p>
+    <p style="margin-top:6px">P0 = critical · P1 = high · P2 = moderate · P3 = minor</p>
+  </footer>
+
+</body>
+</html>

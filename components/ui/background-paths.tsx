@@ -120,7 +120,7 @@ export function HeroPaths({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-mono text-[0.6875rem] tracking-[0.12em] uppercase text-accent mb-5"
+            className="font-mono text-[0.6875rem] tracking-[0.12em] uppercase text-accent-hi mb-5"
           >
             {eyebrow}
           </motion.p>

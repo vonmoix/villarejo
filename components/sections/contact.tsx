@@ -17,7 +17,7 @@ export function Contact() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.55 }}
         >
-          <p className="font-mono text-[0.6875rem] text-accent tracking-[0.12em] uppercase mb-3">
+          <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.12em] uppercase mb-3">
             Get in Touch
           </p>
           <h2

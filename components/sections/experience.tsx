@@ -128,7 +128,7 @@ function JobCard({
         style={{ transformOrigin: isRight ? "right center" : "left center" }}
         className={isRight ? "text-right" : "text-left"}
       >
-        <p className="font-mono text-[0.6875rem] text-accent tracking-[0.04em] mb-1.5">
+        <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.04em] mb-1.5">
           {job.period}
         </p>
         <p className="font-display font-semibold text-[1.0625rem] tracking-[-0.015em] text-ink leading-snug mb-0.5">
@@ -259,7 +259,7 @@ export function Experience() {
   return (
     <section id="experience" className="py-28 md:py-40">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
-        <p className="font-mono text-[0.6875rem] text-accent tracking-[0.12em] uppercase mb-3">
+        <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.12em] uppercase mb-3">
           Career
         </p>
         <h2

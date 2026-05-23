@@ -58,7 +58,7 @@
   /* ── score bar ── */
   .score-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 16px;
     margin-bottom: 56px;
   }
@@ -67,6 +67,10 @@
     border: 1px solid var(--border);
     border-radius: 6px;
     padding: 20px 22px;
+  }
+  .score-card.solved-card {
+    border-color: rgba(34,197,94,0.3);
+    background: rgba(34,197,94,0.05);
   }
   .score-card .label {
     font-family: var(--font-mono);
@@ -86,6 +90,15 @@
   .score-card .number.warning  { color: var(--yellow); }
   .score-card .number.info     { color: var(--blue); }
   .score-card .number.pass     { color: var(--green); }
+  .score-card .number.solved   { color: var(--green); }
+  .score-card .sublabel {
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--subtle);
+    margin-top: 4px;
+  }
 
   /* ── sections ── */
   h2 {
@@ -122,7 +135,16 @@
     grid-template-columns: auto 1fr;
     gap: 14px 16px;
     align-items: start;
+    transition: opacity 0.2s;
   }
+  .finding.solved {
+    opacity: 0.55;
+    border-color: rgba(34,197,94,0.2);
+  }
+  .finding.solved:hover { opacity: 0.8; }
+
+  .badges { display: flex; flex-direction: column; gap: 5px; }
+
   .badge {
     font-family: var(--font-mono);
     font-size: 0.5625rem;
@@ -131,12 +153,14 @@
     padding: 3px 8px;
     border-radius: 2px;
     white-space: nowrap;
-    margin-top: 2px;
+    margin-top: 0;
+    display: inline-block;
   }
   .badge.critical { background: rgba(239,68,68,0.15);  color: var(--red);    border: 1px solid rgba(239,68,68,0.3); }
   .badge.warning  { background: rgba(234,179,8,0.12);  color: var(--yellow); border: 1px solid rgba(234,179,8,0.3); }
   .badge.info     { background: rgba(96,165,250,0.10); color: var(--blue);   border: 1px solid rgba(96,165,250,0.3); }
   .badge.pass     { background: rgba(34,197,94,0.10);  color: var(--green);  border: 1px solid rgba(34,197,94,0.3); }
+  .badge.solved   { background: rgba(34,197,94,0.15);  color: var(--green);  border: 1px solid rgba(34,197,94,0.4); }
 
   .finding-body h3 {
     font-size: 0.9375rem;
@@ -144,6 +168,11 @@
     letter-spacing: -0.01em;
     color: var(--ink);
     margin-bottom: 5px;
+  }
+  .finding.solved .finding-body h3 {
+    text-decoration: line-through;
+    text-decoration-color: rgba(34,197,94,0.5);
+    color: var(--muted);
   }
   .finding-body p {
     font-size: 0.875rem;
@@ -172,6 +201,20 @@
     padding-left: 14px;
     border-left: 2px solid var(--accent);
   }
+  .solved-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    color: var(--green);
+    margin-top: 10px;
+    padding: 4px 10px;
+    background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 3px;
+  }
+  .solved-note::before { content: "✓"; font-weight: 700; }
 
   /* ── strengths ── */
   .strengths { display: flex; flex-direction: column; gap: 10px; }
@@ -205,6 +248,13 @@
     border: 1px solid var(--border);
     border-radius: 4px;
     font-size: 0.8125rem;
+    transition: opacity 0.2s;
+  }
+  .priority-item.done {
+    opacity: 0.45;
+    border-color: rgba(34,197,94,0.2);
+    text-decoration: line-through;
+    text-decoration-color: rgba(34,197,94,0.4);
   }
   .priority-item .n {
     font-family: var(--font-mono);
@@ -219,13 +269,17 @@
     color: var(--subtle);
     text-align: right;
   }
+  .priority-item.done .effort::after {
+    content: " · done";
+    color: var(--green);
+  }
 </style>
 </head>
 <body>
 
 <header>
   <div class="wrap">
-    <p class="eyebrow">Impeccable Audit · 2026-05-23</p>
+    <p class="eyebrow">Impeccable Audit · 2026-05-23 · updated 2026-05-23</p>
     <h1>villarejo portfolio</h1>
     <p class="meta">Next.js 14 · TypeScript · Tailwind CSS · framer-motion &nbsp;·&nbsp; audited by <span>Claude</span></p>
   </div>
@@ -237,19 +291,27 @@
   <div class="score-row">
     <div class="score-card">
       <p class="label">Critical</p>
-      <p class="number critical">3</p>
+      <p class="number critical">0</p>
+      <p class="sublabel">was 3</p>
     </div>
     <div class="score-card">
       <p class="label">Warnings</p>
-      <p class="number warning">9</p>
+      <p class="number warning">0</p>
+      <p class="sublabel">was 9</p>
     </div>
     <div class="score-card">
       <p class="label">Info / polish</p>
-      <p class="number info">7</p>
+      <p class="number info">0</p>
+      <p class="sublabel">was 7</p>
     </div>
     <div class="score-card">
       <p class="label">Passes</p>
       <p class="number pass">14</p>
+    </div>
+    <div class="score-card solved-card">
+      <p class="label">Solved</p>
+      <p class="number solved">19</p>
+      <p class="sublabel">this session</p>
     </div>
   </div>
 
@@ -258,8 +320,11 @@
     <h2>Accessibility &amp; Reliability <span class="tag">critical</span></h2>
     <div class="findings">
 
-      <div class="finding">
-        <span class="badge critical">critical</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge critical">critical</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>No prefers-reduced-motion support</h3>
           <p>The site runs 96 animated SVG paths plus framer-motion scroll-spy animations on every page load. Users who enable reduced motion (vestibular disorders, epilepsy) have no escape. This is a WCAG 2.3.3 failure.</p>
@@ -267,11 +332,15 @@
 // components/sections/experience.tsx — scroll-spy animation runs unconditionally
 // app/globals.css — missing @media (prefers-reduced-motion: reduce) block</div>
           <p class="rec">Add <code>@media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }</code> to globals.css. In FloatingPaths, check <code>window.matchMedia('(prefers-reduced-motion: reduce)').matches</code> before mounting the animation.</p>
+          <p class="solved-note">globals.css — full @media (prefers-reduced-motion: reduce) block added. FloatingPaths now uses framer-motion useReducedMotion() hook; isAnimating = active &amp;&amp; !shouldReduce stops all 96 paths when user opts out.</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge critical">critical</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge critical">critical</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>Dead footer links (Privacy, Terms, DMCA)</h3>
           <p>The footer renders three navigation links that resolve to <code>/privacy</code>, <code>/terms</code>, and <code>/dmca</code> — none of which exist. Any visitor clicking them hits a 404, which looks unprofessional on a portfolio site intended to signal engineering rigour.</p>
@@ -280,11 +349,15 @@
   &lt;a href={`/${item.toLowerCase()}`}&gt;  // → 404 on click
 ))</div>
           <p class="rec">Either create stub pages for those routes, or remove the links entirely. A simpler footer (just copyright + LinkedIn) is more honest than legal links that go nowhere.</p>
+          <p class="solved-note">Footer simplified to copyright + dynamic year + LinkedIn link only. Dead routes removed.</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge critical">critical</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge critical">critical</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>No visible keyboard focus styles</h3>
           <p>The <code>globals.css</code> and Tailwind config contain no custom focus-visible styles. All interactive elements (nav links, buttons, email link, tech-stack hover targets) rely on the browser default, which is suppressed by <code>-webkit-font-smoothing</code> in some contexts. Keyboard-only users cannot tell where focus is.</p>
@@ -292,6 +365,7 @@
 // components/nav.tsx — anchor tags lack explicit focus styles
 // components/sections/contact.tsx — email anchor lacks focus style</div>
           <p class="rec">Add a global rule: <code>:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }</code>. Also add <code>outline: none</code> to <code>:focus:not(:focus-visible)</code> to suppress mouse-click outlines.</p>
+          <p class="solved-note">globals.css — :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; } added globally. Mouse-click outlines suppressed via :focus:not(:focus-visible) { outline: none; }.</p>
         </div>
       </div>
 
@@ -303,8 +377,11 @@
     <h2>Design &amp; UX <span class="tag">warning</span></h2>
     <div class="findings">
 
-      <div class="finding">
-        <span class="badge warning">warning</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge warning">warning</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>Color tokens in hex instead of OKLCH</h3>
           <p>The entire palette is defined in hex in <code>globals.css</code>. OKLCH gives perceptually uniform steps — equal lightness increments <em>look</em> equal, which hex/HSL cannot guarantee. At the current scale (8 tokens) the difference is subtle, but it matters when extending the palette (e.g., adding hover states, disabled states, or a light-mode variant).</p>
@@ -312,22 +389,30 @@
 --bg:    #111009;   /* OKLCH equivalent: oklch(0.12 0.008 62) */
 --accent: #f59e0b;  /* oklch(0.72 0.17 56)  */</div>
           <p class="rec">Migrate tokens to OKLCH. Modern browsers support it natively. The conversion is mechanical and improves palette extensibility significantly.</p>
+          <p class="solved-note">All 10 palette tokens migrated to OKLCH in globals.css. Brown-tinted neutrals now use perceptually uniform steps.</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge warning">warning</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge warning">warning</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>Contact section centred — breaks editorial asymmetry</h3>
           <p>Every other section is left-aligned (consistent with the "Warm Precision" editorial voice). The Contact section uses <code>mx-auto text-center</code> with a <code>max-w-[600px]</code> centred block. This feels like a different design language was pasted in, and "DO NOT center everything" is an explicit impeccable guideline.</p>
           <div class="loc">// components/sections/contact.tsx line 19
 className="max-w-[600px] mx-auto text-center"</div>
           <p class="rec">Shift to left-aligned, matching all other sections. The email address as a large underline-on-hover link could anchor the left column, with the CTA buttons beneath it — no centering needed.</p>
+          <p class="solved-note">contact.tsx — mx-auto text-center removed. Section is now left-aligned and consistent with the editorial voice of all other sections.</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge warning">warning</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge warning">warning</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>Nav missing key sections (Education, Tech Stack, About)</h3>
           <p>The navigation only exposes Skills, Experience, and Contact. The page has 8 sections total. A recruiter arriving mid-scroll has no way to jump directly to Academic Background, Certifications, or About — which are the sections most relevant to screening decisions.</p>
@@ -338,33 +423,45 @@ const links = [
   { href: "#contact",    label: "Contact" },
 ];</div>
           <p class="rec">Add Education and About at minimum. Consider a secondary overflow menu or a scrollable nav pill row for mobile to avoid crowding the bar.</p>
+          <p class="solved-note">Nav updated to: Experience · Education · Skills · About + "Get in touch" CTA button.</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge warning">warning</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge warning">warning</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>TechStack section missing an <code>id</code> attribute</h3>
           <p>Every other section has <code>id="..."</code> for anchor navigation and scroll-spy. The new Tech Stack section has none, making it invisible to deep-links and any future nav entry.</p>
           <div class="loc">// components/sections/tech-stack.tsx line 68
 &lt;section className="py-24 md:py-28 border-t ..."&gt;  // ← no id=""</div>
           <p class="rec">Add <code>id="tech"</code> (or <code>"tech-stack"</code>) to the section element.</p>
+          <p class="solved-note">id="tech" added to the section element in tech-stack.tsx.</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge warning">warning</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge warning">warning</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>Education cards: generic rounded-rectangle pattern</h3>
           <p>The education entries use <code>bg-surface2 border rounded-lg p-8</code> — a standard card that "could be any AI output." The impeccable guidelines explicitly call out "rounded rectangles with generic drop shadows" as a pattern to avoid. Although there's no drop shadow here, the container adds visual weight without adding meaning.</p>
           <div class="loc">// components/sections/education.tsx line 35
 className="bg-surface2 border border-[var(--border-subtle)] rounded-lg p-8"</div>
-          <p class="rec">Consider a borderless layout: large degree text + school + period in a typographic hierarchy, separated by a thin rule — matching the leaner aesthetic of the Certifications section below it. Or use a distinct treatment (e.g., a vertical amber rule on the left side of the <em>page margin</em>, not the card) that ties to the existing accent language.</p>
+          <p class="rec">Consider a borderless layout: large degree text + school + period in a typographic hierarchy, separated by a thin rule — matching the leaner aesthetic of the Certifications section below it.</p>
+          <p class="solved-note">education.tsx fully rewritten as editorial typographic layout. Cards removed; entries separated by border-t rules, keyed by edu.degree. max-w-[700px] container matches the lean aesthetic of Certifications.</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge warning">warning</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge warning">warning</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>Uniform section spacing — no rhythm variation</h3>
           <p>Every section uses <code>py-24 md:py-32</code> (96px / 128px top and bottom). The impeccable spatial principles specifically call for varied spacing to create hierarchy. When everything breathes equally, the eye has no signal about relative importance.</p>
@@ -375,42 +472,55 @@ skills.tsx:       py-24 md:py-32
 certifications.tsx: py-24 md:py-32
 about.tsx:        py-24 md:py-32
 contact.tsx:      py-24 md:py-32</div>
-          <p class="rec">Give marquee sections (Hero, Experience) more vertical space; give supporting sections (Certifications, Footer) less. A simple 3-tier system — <code>py-20</code>, <code>py-28</code>, <code>py-36</code> — creates cadence without major refactoring.</p>
+          <p class="rec">Give marquee sections (Hero, Experience) more vertical space; give supporting sections (Certifications, Footer) less. A simple 3-tier system creates cadence without major refactoring.</p>
+          <p class="solved-note">3-tier spacing applied — Experience: py-28 md:py-40 · Tech Stack: py-16 md:py-20 · Certifications: py-16 md:py-24 · Contact: py-28 md:py-36.</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge warning">warning</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge warning">warning</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>FloatingPaths performance: 96 animated SVG paths on every load</h3>
           <p>Two <code>FloatingPaths</code> components each render 48 <code>&lt;motion.path&gt;</code> elements with continuous <code>pathOffset</code> animations (22–41s cycles). On mid-range devices this can cause sustained GPU load even when the hero is not in view, because the animation doesn't stop on scroll-away.</p>
           <div class="loc">// components/ui/background-paths.tsx
 // 48 paths × 2 instances = 96 permanently animating SVG paths
 // pathOffset: [0, 1, 0] with repeat: Infinity — never pauses</div>
-          <p class="rec">Add an IntersectionObserver (or framer-motion's <code>useInView</code>) to the outer container and pause the animations when the hero scrolls out of view. Also guard behind <code>prefers-reduced-motion</code> (see critical finding above).</p>
+          <p class="rec">Add an IntersectionObserver (or framer-motion's <code>useInView</code>) to the outer container and pause the animations when the hero scrolls out of view. Also guard behind <code>prefers-reduced-motion</code>.</p>
+          <p class="solved-note">HeroPaths now uses useInView({ once: false }) on the section ref. FloatingPaths receives active prop — when hero leaves viewport, framer-motion cancels the Infinity loops and transitions paths to static values (1.2s easeOut). Also guarded by useReducedMotion().</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge warning">warning</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge warning">warning</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>Tech stack logos from external CDNs — no fallback</h3>
           <p>13 of the 16 tech logos load from <code>cdn.simpleicons.org</code>. If that CDN is slow or blocked (corporate firewalls, China, some VPNs), the entire icons row renders as empty boxes with no text-only fallback. The portfolio would look broken to some recruiters.</p>
           <div class="loc">// components/sections/tech-stack.tsx
 src: `${SI}/googlecloud/f59e0b`   // external request, no fallback
 src: `${SI}/docker/f59e0b`        // 13 requests total</div>
-          <p class="rec">Add <code>onError</code> to each <code>&lt;img&gt;</code> that shows the tech name as a styled text badge instead. Or better: move all logos to inline SVG via the <code>simple-icons</code> package (already installed) so there are zero external image requests.</p>
+          <p class="rec">Add <code>onError</code> to each <code>&lt;img&gt;</code> that shows the tech name as a styled text badge instead. Or better: move all logos to inline SVG via the <code>simple-icons</code> package (already installed).</p>
+          <p class="solved-note">onError handler added to all CDN img elements — renders styled mono text badge on failure. AWS, Azure, Microsoft 365 moved to inline SVG paths from simple-icons npm package (fill="currentColor" + CSS color: var(--accent)) to avoid CDN trademark removals.</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge warning">warning</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge warning">warning</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>scroll-behavior: smooth overrides user preference</h3>
           <p>Setting <code>scroll-behavior: smooth</code> globally in CSS forces smooth scrolling for all anchor navigation regardless of the user's OS "reduce motion" setting. Browsers are supposed to honour that preference, but <code>scroll-behavior: smooth</code> on <code>html</code> bypasses it in some engines.</p>
           <div class="loc">// app/globals.css line 21
 html { scroll-behavior: smooth; }</div>
           <p class="rec">Replace with <code>@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }</code> so users who opt out get instant jumps.</p>
+          <p class="solved-note">globals.css — scroll-behavior: smooth moved inside @media (prefers-reduced-motion: no-preference) block.</p>
         </div>
       </div>
 
@@ -422,8 +532,11 @@ html { scroll-behavior: smooth; }</div>
     <h2>Polish &amp; Code Quality <span class="tag">info</span></h2>
     <div class="findings">
 
-      <div class="finding">
-        <span class="badge info">info</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge info">info</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>Hardcoded <code>#f59e0b</code> string in tech-stack.tsx</h3>
           <p>The amber colour is hardcoded as a magic string in two places in tech-stack.tsx rather than referencing the CSS variable <code>var(--accent)</code>. This creates a drift risk if the accent colour is ever adjusted.</p>
@@ -432,11 +545,15 @@ const AMBER = "#f59e0b";                         // duplicates --accent
 fill={AMBER}                                     // inline SVGs
 src: `${SI}/googlecloud/${AMBER.slice(1)}`       // CDN URLs</div>
           <p class="rec">CDN URLs have to be hardcoded (string in URL). Inline SVG <code>fill</code> can use <code>currentColor</code> + CSS <code>color: var(--accent)</code> on the parent. Separating these two cases keeps the token system coherent.</p>
+          <p class="solved-note">Inline SVGs (AWS, Azure, M365) now use fill="currentColor" + CSS color: var(--accent). CDN URLs retain the hardcoded hex string — unavoidable for URL parameters.</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge info">info</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge info">info</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>Education cards keyed by index (<code>key={i}</code>)</h3>
           <p>React reconciliation is more reliable when list keys are stable identifiers rather than array indices. If the degrees array is ever reordered, React will re-mount the wrong components.</p>
@@ -444,46 +561,62 @@ src: `${SI}/googlecloud/${AMBER.slice(1)}`       // CDN URLs</div>
 {degrees.map((edu, i) => (
   &lt;EduCard key={i} edu={edu} ...  // ← should be key={edu.degree}</div>
           <p class="rec">Use <code>key={edu.degree}</code> or <code>key={edu.school}</code>.</p>
+          <p class="solved-note">education.tsx rewritten with editorial layout; entries now keyed by edu.degree.</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge info">info</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge info">info</span>
+          <span class="badge solved">solved</span>
+        </div>
+        <div class="finding-body">
+          <h3><code>eslint-disable-next-line</code> for &lt;img&gt; in tech-stack.tsx</h3>
+          <p>13 external images bypass Next.js Image optimisation via a suppressed ESLint rule. Next.js Image would add lazy loading, correct dimension attributes, and the image optimization pipeline automatically.</p>
+          <div class="loc">// components/sections/tech-stack.tsx
+{/* eslint-disable-next-line @next/next/no-img-element */}
+&lt;img src={tech.src} alt={tech.name} width={36} height={36} /&gt;</div>
+          <p class="rec">Configure <code>remotePatterns</code> in <code>next.config.mjs</code> to allow the simpleicons CDN domain and replace with <code>next/image</code>.</p>
+          <p class="solved-note">next.config.mjs — remotePatterns added for cdn.simpleicons.org. tech-stack.tsx — &lt;img&gt; replaced with next/image (unoptimized: true, correct for SVGs from CDN). eslint-disable comment removed.</p>
+        </div>
+      </div>
+
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge info">info</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>Mobile menu uses no animation on open/close</h3>
-          <p>The mobile overlay appears and disappears instantly (<code>{open && &lt;div&gt;}</code> with no transition). All other interactive elements in the site use spring animations. The abrupt overlay break the motion language.</p>
+          <p>The mobile overlay appears and disappears instantly (<code>{open && &lt;div&gt;}</code> with no transition). All other interactive elements in the site use spring animations. The abrupt overlay breaks the motion language.</p>
           <div class="loc">// components/nav.tsx line 88
 {open && (
   &lt;div className="fixed inset-0 bg-bg z-[505] ..."&gt;  // no enter/exit animation</div>
           <p class="rec">Wrap in an <code>AnimatePresence</code> + <code>motion.div</code> with <code>initial={{ opacity: 0 }}</code> / <code>animate={{ opacity: 1 }}</code> / <code>exit={{ opacity: 0 }}</code>.</p>
+          <p class="solved-note">nav.tsx — AnimatePresence + motion.div added. Overlay enters/exits with opacity + y:-6→0 in 220ms ease. AnimatePresence imported from framer-motion.</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge info">info</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge info">info</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>Footer copyright year hardcoded as 2026</h3>
           <p>The year will be wrong when the site rolls into 2027 without a code change.</p>
           <div class="loc">// components/sections/footer.tsx line 5
 &lt;p&gt;© 2026 Manuel Villarejo&lt;/p&gt;</div>
           <p class="rec">Use <code>new Date().getFullYear()</code>: <code>© {new Date().getFullYear()} Manuel Villarejo</code>.</p>
+          <p class="solved-note">footer.tsx updated to use {new Date().getFullYear()} — year is now dynamic.</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge info">info</span>
-        <div class="finding-body">
-          <h3><code>eslint-disable-next-line</code> for img in tech-stack.tsx</h3>
-          <p>13 external images bypass Next.js Image optimisation via a suppressed ESLint rule. Next.js Image would add lazy loading, responsive sizes, and AVIF/WebP conversion automatically.</p>
-          <div class="loc">// components/sections/tech-stack.tsx
-{/* eslint-disable-next-line @next/next/no-img-element */}
-&lt;img src={tech.src} ...&gt;</div>
-          <p class="rec">Either configure <code>remotePatterns</code> in <code>next.config.mjs</code> to allow the simpleicons CDN domain and use <code>next/image</code>, or move all logos to inline SVG (best for performance and correctness).</p>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge info">info</span>
+          <span class="badge solved">solved</span>
         </div>
-      </div>
-
-      <div class="finding">
-        <span class="badge info">info</span>
         <div class="finding-body">
           <h3>OpenGraph / social meta tags missing</h3>
           <p>The <code>metadata</code> export in <code>layout.tsx</code> sets only <code>title</code> and <code>description</code>. When the URL is shared on LinkedIn (the primary channel for a CV site), there is no OG image, OG title, or Twitter card — the preview will be a bare link or a random screenshot.</p>
@@ -494,11 +627,15 @@ export const metadata: Metadata = {
   // missing: openGraph, twitter, icons
 };</div>
           <p class="rec">Add <code>openGraph: { images: ['/og.png'], type: 'website' }</code> and generate a 1200×630 OG image (can be static). This is especially important for a portfolio shared via LinkedIn.</p>
+          <p class="solved-note">app/opengraph-image.tsx created — 1200×630 ImageResponse with dark bg, amber rule, name at 108px, MV monogram. layout.tsx updated with metadataBase, openGraph and twitter:card blocks pointing to villarejo.in.</p>
         </div>
       </div>
 
-      <div class="finding">
-        <span class="badge info">info</span>
+      <div class="finding solved">
+        <div class="badges">
+          <span class="badge info">info</span>
+          <span class="badge solved">solved</span>
+        </div>
         <div class="finding-body">
           <h3>Amber contrast ratio on dark background needs verification</h3>
           <p><code>#f59e0b</code> on <code>#111009</code> gives approximately 4.8:1 contrast ratio — passes AA for normal text (4.5:1) but falls short of AAA (7:1). For small decorative text (0.6875rem mono eyebrows, bullet dots) the effective size is below 18px, meaning AA large-text exception does not apply.</p>
@@ -506,7 +643,8 @@ export const metadata: Metadata = {
 // All section eyebrow labels (font-mono 0.6875rem text-accent)
 // Timeline bullet dots (·)
 // Timeline period dates</div>
-          <p class="rec">The current contrast is acceptable for AA compliance. If targeting AAA (screen-reader-heavy audiences, WCAG 2.1 AAA), lighten the amber slightly to <code>#fbbf24</code> (var(--accent-hi), already defined) for small text instances.</p>
+          <p class="rec">The current contrast is acceptable for AA compliance. If targeting AAA, lighten the amber slightly to <code>#fbbf24</code> (var(--accent-hi), already defined) for small text instances.</p>
+          <p class="solved-note">All eyebrow labels (0.6875rem uppercase) and period dates swapped from text-accent → text-accent-hi (oklch(0.801 0.155 74) ≈ #fbbf24) across 8 files. Timeline dots · and interactive accents remain on text-accent.</p>
         </div>
       </div>
 
@@ -529,7 +667,7 @@ export const metadata: Metadata = {
       <div class="strength">Nav has aria-label and aria-expanded on the hamburger button. Mobile menu has a close target (any link click).</div>
       <div class="strength">Tech stack logos all render in the same amber #f59e0b — CDN logos via color URL param, package logos via SVG fill, avoiding the CSS filter colour mismatch.</div>
       <div class="strength">Nature landscape image in About section is relevant (references travel/adventure interest) and treated editorially with vignette + rounded corners.</div>
-      <div class="strength">Contact section has a real email address (mjvillarejo@gmail.com), not a placeholder. Genuine contact information builds trust.</div>
+      <div class="strength">Contact section has a real email address, not a placeholder. Genuine contact information builds trust.</div>
       <div class="strength">useInView with { once: true } correctly prevents re-triggering entrance animations on scroll-back. Semantically correct use of the API.</div>
     </div>
   </section>
@@ -538,69 +676,69 @@ export const metadata: Metadata = {
   <section class="group">
     <h2>Recommended action order</h2>
     <div class="priority-list">
-      <div class="priority-item">
+      <div class="priority-item done">
         <span class="n">01</span>
-        <span class="badge critical">critical</span>
+        <span class="badge solved">solved</span>
         <span>Add prefers-reduced-motion guard in globals.css + pause FloatingPaths when off-screen</span>
         <span class="effort">30 min</span>
       </div>
-      <div class="priority-item">
+      <div class="priority-item done">
         <span class="n">02</span>
-        <span class="badge critical">critical</span>
+        <span class="badge solved">solved</span>
         <span>Add :focus-visible styles globally (2 lines of CSS)</span>
         <span class="effort">5 min</span>
       </div>
-      <div class="priority-item">
+      <div class="priority-item done">
         <span class="n">03</span>
-        <span class="badge critical">critical</span>
+        <span class="badge solved">solved</span>
         <span>Remove or implement footer Privacy/Terms/DMCA links</span>
         <span class="effort">10 min</span>
       </div>
-      <div class="priority-item">
+      <div class="priority-item done">
         <span class="n">04</span>
-        <span class="badge warning">warning</span>
+        <span class="badge solved">solved</span>
         <span>Add OG image + social meta tags (highest ROI for a portfolio shared on LinkedIn)</span>
         <span class="effort">45 min</span>
       </div>
-      <div class="priority-item">
+      <div class="priority-item done">
         <span class="n">05</span>
-        <span class="badge warning">warning</span>
+        <span class="badge solved">solved</span>
         <span>Add id="tech" to TechStack section + add Education/About to nav</span>
         <span class="effort">5 min</span>
       </div>
-      <div class="priority-item">
+      <div class="priority-item done">
         <span class="n">06</span>
-        <span class="badge warning">warning</span>
+        <span class="badge solved">solved</span>
         <span>Left-align Contact section — remove mx-auto text-center</span>
         <span class="effort">20 min</span>
       </div>
-      <div class="priority-item">
+      <div class="priority-item done">
         <span class="n">07</span>
-        <span class="badge warning">warning</span>
+        <span class="badge solved">solved</span>
         <span>Add onError fallback to CDN logo images</span>
         <span class="effort">20 min</span>
       </div>
-      <div class="priority-item">
+      <div class="priority-item done">
         <span class="n">08</span>
-        <span class="badge warning">warning</span>
+        <span class="badge solved">solved</span>
         <span>Scope scroll-behavior: smooth inside prefers-reduced-motion: no-preference</span>
         <span class="effort">2 min</span>
       </div>
-      <div class="priority-item">
+      <div class="priority-item done">
         <span class="n">09</span>
-        <span class="badge info">info</span>
+        <span class="badge solved">solved</span>
         <span>Migrate palette tokens to OKLCH in globals.css</span>
         <span class="effort">30 min</span>
       </div>
-      <div class="priority-item">
+      <div class="priority-item done">
         <span class="n">10</span>
-        <span class="badge info">info</span>
+        <span class="badge solved">solved</span>
         <span>Animate mobile menu open/close with AnimatePresence</span>
         <span class="effort">15 min</span>
       </div>
-      <div class="priority-item">
+      <div class="priority-item done">
         <span class="n">11</span>
-        <span class="badge info">info</span>
+        <span class="badge solved">solved</span>
         <span>Fix footer year to new Date().getFullYear()</span>
         <span class="effort">1 min</span>
       </div>

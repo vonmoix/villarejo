@@ -26,7 +26,7 @@ export function About() {
         <div className="grid gap-16 md:gap-24 md:grid-cols-2">
           {/* languages */}
           <div>
-            <p className="font-mono text-[0.6875rem] text-accent tracking-[0.12em] uppercase mb-3">
+            <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.12em] uppercase mb-3">
               Languages
             </p>
             <h2
@@ -57,7 +57,7 @@ export function About() {
 
           {/* interests */}
           <div>
-            <p className="font-mono text-[0.6875rem] text-accent tracking-[0.12em] uppercase mb-3">
+            <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.12em] uppercase mb-3">
               Interests
             </p>
             <h2

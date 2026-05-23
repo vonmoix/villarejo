@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -70,21 +71,30 @@ export function Nav() {
         </button>
       </div>
 
-      {/* mobile menu — animated with framer-motion */}
-      {open && (
-        <div className="fixed inset-0 bg-bg z-[505] flex flex-col items-center justify-center gap-10">
-          {[...links, { href: "#contact", label: "Get in touch" }].map(({ href, label }) => (
-            <a
-              key={`${href}-${label}`}
-              href={href}
-              onClick={close}
-              className="text-2xl font-medium text-muted hover:text-ink transition-colors"
-            >
-              {label}
-            </a>
-          ))}
-        </div>
-      )}
+      {/* mobile menu */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="mobile-menu"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+            className="fixed inset-0 bg-bg z-[505] flex flex-col items-center justify-center gap-10"
+          >
+            {[...links, { href: "#contact", label: "Get in touch" }].map(({ href, label }) => (
+              <a
+                key={`${href}-${label}`}
+                href={href}
+                onClick={close}
+                className="text-2xl font-medium text-muted hover:text-ink transition-colors"
+              >
+                {label}
+              </a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

@@ -34,7 +34,7 @@ function EduEntry({ edu, index }: { edu: (typeof degrees)[0]; index: number }) {
       transition={{ duration: 0.5, delay: index * 0.1 }}
       className={`py-10 ${index === 0 ? "border-t border-[var(--border-subtle)]" : ""} border-b border-[var(--border-subtle)]`}
     >
-      <p className="font-mono text-[0.6875rem] text-accent tracking-[0.04em] mb-4">
+      <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.04em] mb-4">
         {edu.period}
       </p>
       <p className="font-display font-bold text-[1.375rem] tracking-[-0.02em] text-ink leading-snug mb-2">
@@ -60,7 +60,7 @@ export function Education() {
   return (
     <section id="education" className="py-24 md:py-32 bg-surface">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
-        <p className="font-mono text-[0.6875rem] text-accent tracking-[0.12em] uppercase mb-3">
+        <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.12em] uppercase mb-3">
           Education
         </p>
         <h2

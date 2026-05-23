@@ -94,7 +94,7 @@ export function Skills() {
   return (
     <section id="skills" className="py-24 md:py-32">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
-        <p className="font-mono text-[0.6875rem] text-accent tracking-[0.12em] uppercase mb-3">
+        <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.12em] uppercase mb-3">
           Competencies
         </p>
         <h2
