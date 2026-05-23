@@ -231,12 +231,29 @@ function TimelineItem({
 
 export function Experience() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  // Scroll-spy: activate the item whose center is closest to 42% from viewport top
   useEffect(() => {
-    const id = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % jobs.length);
-    }, 2000);
-    return () => clearInterval(id);
+    const onScroll = () => {
+      const target = window.innerHeight * 0.42;
+      let closest = 0;
+      let minDist  = Infinity;
+
+      itemRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const { top, height } = el.getBoundingClientRect();
+        const center = top + height / 2;
+        const dist   = Math.abs(center - target);
+        if (dist < minDist) { minDist = dist; closest = i; }
+      });
+
+      setActiveIndex(closest);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll(); // set initial active on mount
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
@@ -272,6 +289,7 @@ export function Experience() {
               job={job}
               index={i}
               isActive={i === activeIndex}
+              onRef={(el) => { itemRefs.current[i] = el; }}
             />
           ))}
         </div>
