@@ -1,6 +1,7 @@
 import { Nav } from "@/components/nav";
 import { HeroPaths } from "@/components/ui/background-paths";
 import { Experience } from "@/components/sections/experience";
+import { TechStack } from "@/components/sections/tech-stack";
 import { Education } from "@/components/sections/education";
 import { Skills } from "@/components/sections/skills";
 import { Certifications } from "@/components/sections/certifications";
@@ -44,6 +45,7 @@ export default function Home() {
         </HeroPaths>
 
         <Experience />
+        <TechStack />
         <Education />
         <Skills />
         <Certifications />
