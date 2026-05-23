@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg:             #111009;
+  --surface:        #1a1815;
+  --surface-2:      #211f1c;
+  --border:         #2a2720;
+  --border-subtle:  #221f1c;
+  --accent:         #f59e0b;
+  --accent-hi:      #fbbf24;
+  --text:           #f5f0e8;
+  --text-muted:     #9c9590;
+  --text-subtle:    #5c5651;
+
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

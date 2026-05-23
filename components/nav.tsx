@@ -1,0 +1,104 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+
+const links = [
+  { href: "#skills",     label: "Skills" },
+  { href: "#experience", label: "Experience" },
+  { href: "#contact",    label: "Contact" },
+];
+
+export function Nav() {
+  const [stuck, setStuck] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setStuck(window.scrollY > 48);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const close = () => setOpen(false);
+
+  return (
+    <nav
+      className={cn(
+        "fixed inset-x-0 top-0 z-[500] py-4 transition-all duration-300",
+        stuck && "bg-bg/88 backdrop-blur-[14px]"
+      )}
+    >
+      <div className="max-w-[1100px] mx-auto px-6 md:px-8 flex items-center justify-between">
+        <a href="#" className="font-display font-bold tracking-[-0.02em] text-[1.1875rem] text-ink">
+          M<span className="text-accent">V</span>
+        </a>
+
+        {/* desktop */}
+        <ul className="hidden md:flex items-center gap-6 list-none">
+          {links.map(({ href, label }) => (
+            <li key={href}>
+              <a
+                href={href}
+                className="text-[0.875rem] font-medium text-muted hover:text-ink transition-colors tracking-[0.01em]"
+              >
+                {label}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a
+              href="#contact"
+              className="text-[0.875rem] font-medium text-accent border border-accent/40 px-4 py-1.5
+                         rounded-[3px] hover:bg-accent/10 transition-colors"
+            >
+              Get in touch
+            </a>
+          </li>
+        </ul>
+
+        {/* burger */}
+        <button
+          className="flex md:hidden flex-col gap-[5px] p-2 bg-transparent border-none cursor-pointer z-[510]"
+          onClick={() => setOpen((o) => !o)}
+          aria-label="Toggle navigation"
+          aria-expanded={open}
+        >
+          <span
+            className={cn(
+              "block w-5 h-[1.5px] bg-muted transition-transform duration-200",
+              open && "translate-y-[6.5px] rotate-45"
+            )}
+          />
+          <span
+            className={cn(
+              "block w-5 h-[1.5px] bg-muted transition-opacity duration-200",
+              open && "opacity-0"
+            )}
+          />
+          <span
+            className={cn(
+              "block w-5 h-[1.5px] bg-muted transition-transform duration-200",
+              open && "-translate-y-[6.5px] -rotate-45"
+            )}
+          />
+        </button>
+      </div>
+
+      {/* mobile menu */}
+      {open && (
+        <div className="fixed inset-0 bg-bg z-[505] flex flex-col items-center justify-center gap-12">
+          {[...links, { href: "#contact", label: "Get in touch" }].map(({ href, label }) => (
+            <a
+              key={`${href}-${label}`}
+              href={href}
+              onClick={close}
+              className="text-2xl font-medium text-muted hover:text-ink transition-colors"
+            >
+              {label}
+            </a>
+          ))}
+        </div>
+      )}
+    </nav>
+  );
+}
