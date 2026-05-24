@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function About() {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef   = useRef<HTMLVideoElement>(null);
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -15,6 +16,12 @@ export function About() {
   return (
     <section id="about" className="py-24 md:py-32">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
+
+        <p className="text-ink text-[1.0625rem] font-medium max-w-[60ch] mb-12 leading-[1.78]">
+          Bilingual (English · Spanish native) with 19+ years leading distributed
+          teams across Europe and APAC. I bring the same curiosity to AI&#8209;powered
+          operations and continuous learning as I do to enterprise transformation.
+        </p>
 
         <div className="grid gap-16 md:gap-24 md:grid-cols-2 mb-16">
           {/* languages */}
@@ -70,7 +77,11 @@ export function About() {
         </div>
 
         {/* Video — after content so it doesn't block the text */}
-        <div className="relative w-full overflow-hidden rounded-xl aspect-[16/9] md:aspect-[21/8]">
+        <div
+          className={`relative w-full overflow-hidden rounded-xl aspect-[16/9] md:aspect-[21/8] bg-surface2 transition-all duration-300${
+            !videoLoaded ? " animate-pulse" : ""
+          }`}
+        >
           <video
             ref={videoRef}
             autoPlay
@@ -79,6 +90,8 @@ export function About() {
             playsInline
             preload="auto"
             poster="/video-poster.jpg"
+            aria-label="Landscape video"
+            onCanPlay={() => setVideoLoaded(true)}
             className="absolute inset-0 w-full h-full object-cover object-center"
           >
             <source src="/video.webm" type="video/webm" />

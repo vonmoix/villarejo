@@ -41,13 +41,13 @@ export function Certifications() {
     <section id="certifications" className="py-16 md:py-24 bg-surface">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
         <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.12em] uppercase mb-3">
-          Credentials
+          Track Record
         </p>
         <h2
           className="font-display font-bold text-ink tracking-[-0.027em] leading-[1.07] mb-14"
           style={{ fontSize: "clamp(1.875rem, 4vw, 3rem)" }}
         >
-          Certifications
+          Certifications & Foundations
         </h2>
 
         <div>

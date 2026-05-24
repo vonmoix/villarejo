@@ -6,7 +6,7 @@ import { siAmazonaws, siMicrosoftazure, siMicrosoftoffice } from "simple-icons";
 import Image from "next/image";
 
 const SI = "https://cdn.simpleicons.org";
-const AMBER = "#f59e0b";
+const AMBER = "f59e0b"; // matches --accent without the #
 
 type Tech =
   | { name: string; src: string; path?: never }
@@ -38,6 +38,7 @@ function Logo({ tech }: { tech: Tech }) {
     return (
       <svg
         role="img"
+        aria-label={tech.name}
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full"
@@ -79,7 +80,7 @@ export function TechStack() {
     <section id="tech" className="py-16 md:py-20 border-t border-[var(--border-subtle)]">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
         <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.12em] uppercase mb-3">
-          Tech Stack
+          Platform Fluency
         </p>
         <h2
           className="font-display font-bold text-ink tracking-[-0.027em] leading-[1.07] mb-3"

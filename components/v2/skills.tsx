@@ -26,6 +26,16 @@ const groups = [
     ],
   },
   {
+    title: "Cloud Migration & Modernisation",
+    tags: [
+      "Cloud Migration Strategy",
+      "Lift & Shift / Re-architecture",
+      "Multi-cloud Governance",
+      "Infrastructure as Code",
+      "Cost Optimisation",
+    ],
+  },
+  {
     title: "Compliance & Governance",
     tags: [
       "ISO 27001 (5+ audit cycles)",
@@ -110,7 +120,7 @@ export function Skills() {
     <section id="skills" className="py-24 md:py-32">
       <div className="max-w-[1100px] mx-auto px-6 md:px-8">
         <p className="font-mono text-[0.6875rem] text-accent-hi tracking-[0.12em] uppercase mb-3">
-          Expertise Areas
+          What I Deliver
         </p>
         <h2
           className="font-display font-bold text-ink tracking-[-0.027em] leading-[1.07] mb-3"

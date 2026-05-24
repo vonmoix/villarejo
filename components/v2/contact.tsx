@@ -28,24 +28,24 @@ export function Contact() {
             Let&apos;s Work Together
           </h2>
           <p className="text-muted text-base max-w-[52ch] mb-16 leading-[1.78]">
-            Available for interim IT leadership and enterprise transformation
-            engagements — M&amp;A technology integration, ERP/HRIS consolidation,
-            and AI-powered operations. Europe · APAC · UK.
+            Available for interim IT leadership engagements — M&amp;A technology
+            integration, cloud transformation, and AI&#8209;powered operations
+            across Europe, APAC, and the UK.
             I typically respond within 24 hours.
           </p>
-
-          <a
-            href="mailto:mjvillarejo@gmail.com"
-            className="group inline-block font-display font-semibold text-ink tracking-[-0.02em] mb-10 relative"
-            style={{ fontSize: "clamp(1.125rem, 3vw, 1.75rem)" }}
-          >
-            mjvillarejo@gmail.com
-            <span className="absolute bottom-[-2px] left-0 h-px bg-accent w-0 group-hover:w-full transition-all duration-[350ms]" />
-          </a>
 
           <div className="flex gap-4 flex-wrap">
             <Button asChild>
               <a href="mailto:mjvillarejo@gmail.com">Send Email</a>
+            </Button>
+            <Button variant="outline" asChild>
+              <a
+                href="/cv-manuel-villarejo.pdf"
+                download
+                aria-label="Download CV as PDF"
+              >
+                Download CV
+              </a>
             </Button>
             <Button variant="outline" asChild>
               <a
