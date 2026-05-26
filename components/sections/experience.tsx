@@ -207,7 +207,7 @@ function TimelineItem({
           className="relative z-10 rounded-full border-[1.5px] w-[9px] h-[9px]"
           style={
             isActive
-              ? { boxShadow: "0 0 0 5px rgba(245,158,11,0.18)" }
+              ? { boxShadow: "0 0 0 5px var(--accent-glow)" }
               : { boxShadow: "none" }
           }
         />

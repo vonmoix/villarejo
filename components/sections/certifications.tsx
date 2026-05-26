@@ -56,11 +56,11 @@ export function Certifications() {
           ))}
         </div>
 
-        <div className="mt-8 p-5 md:p-6 bg-bg border border-[var(--border-subtle)] rounded-lg">
-          <p className="font-mono text-[0.625rem] tracking-[0.1em] uppercase text-subtle mb-3">
+        <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 sm:gap-8 py-4 border-b border-[var(--border-subtle)]">
+          <p className="font-mono text-[0.625rem] tracking-[0.1em] uppercase text-subtle flex-shrink-0">
             Technical Foundations
           </p>
-          <p className="font-mono text-[0.875rem] text-muted tracking-[0.02em]">
+          <p className="font-mono text-[0.75rem] text-muted tracking-[0.02em] sm:text-right">
             MCTS 2008 · RHCSA · RHCT · CCNA Security · CCNA · MCSE 2003
           </p>
         </div>

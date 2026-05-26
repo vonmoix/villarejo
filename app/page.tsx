@@ -45,9 +45,9 @@ export default function Home() {
         </HeroPaths>
 
         <Experience />
-        <TechStack />
         <Education />
         <Skills />
+        <TechStack />
         <Certifications />
         <About />
         <Contact />

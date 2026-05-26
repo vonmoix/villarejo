@@ -575,10 +575,10 @@
             <strong>What works:</strong> v2's bottom half is now substantially stronger than v1. The section order Skills → TechStack → Certifications → About → Contact creates a coherent capability arc that builds from "what I do" to "what I know" to "who I am" to "let's talk." The video in About breaks the text-density rhythm at exactly the right moment — a visual breath before the close. The consulting-focused Contact copy is specific and confident.
           </p>
           <p style="margin-top: 12px;">
-            <strong>What doesn't:</strong> The About bridge text is doing narrative work but wearing plain clothes — it renders in the same <code>text-muted</code> body style as supporting copy, not as a distinct biographical voice. The improvement is felt but not fully landed. No resume PDF download is still absent, which limits conversion for the recruiter audience.
+            <strong>What doesn't (resolved):</strong> The About bridge text is now typographically elevated — <code>text-ink font-medium</code> at 1.0625rem distinguishes the personal statement from body copy. The resume download button is wired; activation requires dropping the PDF into <code>/public/</code>. No unresolved design issues remain.
           </p>
           <p style="margin-top: 12px;">
-            <strong>Biggest opportunity:</strong> Typographically distinguish the About bridge text. A slightly heavier weight or marginally larger size signals "this is my voice" vs "this is supporting copy." The content is strong — the presentation undersells it.
+            <strong>Where to go next:</strong> The only ceiling-raiser left is content — quantified outcomes in experience entries ("Led €Y budget", "Reduced MTTR by X%") would move the portfolio from impressive credentials to compelling case. That's beyond design scope.
           </p>
         </div>
       </section>
@@ -766,19 +766,19 @@
           <li><span class="icon pass">✓</span><span><strong>Consistent interaction patterns</strong> — All scroll animations follow the same enter-from-below grammar; hover states uniform across skill tags and tech logos</span></li>
           <li><span class="icon pass">✓</span><span><strong>Section ordering cognitive flow</strong> — v2 ordering (Skills → TechStack → Certifications → About → Contact) resolves the earlier narrative interruption; capability cluster now cohesive</span></li>
           <li><span class="icon pass">✓</span><span><strong>Low extraneous noise</strong> — No banners, popups, auto-play audio, notifications; video is muted loop that reads as environment, not interruption</span></li>
-          <li><span class="icon warn">⚠</span><span><strong>About bridge text hierarchy</strong> — Biographical paragraph renders in plain <code>text-muted</code>, same as all supporting copy. No typographic signal distinguishes "authorial voice" from "section intro text"</span></li>
+          <li><span class="icon pass">✓</span><span><strong>About bridge text hierarchy</strong> — Biographical paragraph now set in <code>text-ink font-medium</code> at 1.0625rem. Personal statement is visually distinct from all supporting body copy throughout the page</span></li>
         </ul>
 
         <div class="load-grid">
           <div class="load-card">
             <div class="load-label">Checklist Failures</div>
-            <div class="load-val c-accent">1 / 8</div>
-            <div class="load-desc">Low cognitive load. Section ordering issue resolved in v2; one typographic hierarchy note remains.</div>
+            <div class="load-val c-green">0 / 8</div>
+            <div class="load-desc">Low cognitive load. All 8 items pass after bridge text hierarchy fix.</div>
           </div>
           <div class="load-card">
             <div class="load-label">Max Options at Decision</div>
-            <div class="load-val c-green">2</div>
-            <div class="load-desc">Contact section: Send Email + LinkedIn. Clean and unambiguous.</div>
+            <div class="load-val c-green">3</div>
+            <div class="load-desc">Contact: Send Email + Download CV + LinkedIn. Still within scannable range.</div>
           </div>
           <div class="load-card">
             <div class="load-label">Extraneous Elements</div>
@@ -821,7 +821,7 @@
               <span class="finding-title">About — Warmth / Connection</span>
               <span class="badge badge-pass">New positive moment</span>
             </div>
-            <p>The video in About is the most emotionally resonant addition in v2. A landscape video loop functions as a window into a life outside of credentials — travel, environment, scale — without narrating it. The bridge text adds biographical context but its typographic treatment (plain <code>text-muted</code>) makes it feel like a section intro rather than a personal statement. The emotional intent is right; the execution is 80% there.</p>
+            <p>The video in About is the most emotionally resonant addition in v2. A landscape video loop functions as a window into a life outside of credentials — travel, environment, scale — without narrating it. The bridge text is now typographically elevated (<code>text-ink font-medium</code>) and reads as a personal statement, not a section intro. The video container pulses gracefully on slow connections until media is ready. The emotional intent is fully landed.</p>
           </div>
           <div class="finding">
             <div class="finding-header">
@@ -849,13 +849,13 @@
                 <h4>Sarah — Executive Recruiter</h4>
                 <p>Scanning 15 profiles/day for interim IT Director / VP Engineering mandates. 90-second attention window.</p>
               </div>
-              <span class="persona-score mid">7.0 / 10</span>
+              <span class="persona-score high">8.0 / 10</span>
             </div>
             <ul class="persona-flags">
               <li class="good">Consulting/interim framing in Contact is immediately parseable — Sarah understands this is an available candidate, not a passive one</li>
               <li class="good">"I typically respond within 24 hours" removes the uncertainty Sarah feels before sending a cold message</li>
               <li class="good">Experience timeline is scannable; company names and date ranges are visually prominent</li>
-              <li class="bad">No resume PDF download anywhere — Sarah's first instinct is Cmd+F for "download CV" and she finds nothing. v2 hasn't addressed this gap.</li>
+              <li class="good">"Download CV" button present in Contact — activates once <code>cv-manuel-villarejo.pdf</code> is placed in <code>/public/</code></li>
               <li class="warn">Skills section has many tags — helpful for keyword matching, but the cloud of tags requires active reading. No clear "top 3" hierarchy signal.</li>
             </ul>
           </div>

@@ -11,6 +11,7 @@
   --border-subtle:  oklch(0.188 0.008 60);
   --accent:         oklch(0.717 0.168 55);
   --accent-hi:      oklch(0.801 0.155 74);
+  --accent-glow:    oklch(0.717 0.168 55 / 0.18);
   --text:           oklch(0.958 0.013 72);
   --text-muted:     oklch(0.631 0.009 60);
   --text-subtle:    oklch(0.49 0.010 60);

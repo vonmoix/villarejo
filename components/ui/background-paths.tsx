@@ -176,13 +176,12 @@ export function HeroPaths({
           <motion.div
             className="absolute rounded-full bg-accent"
             style={{ width: 5, height: 5, top: 6 }}
-            animate={{ y: [0, 16, 0] }}
-            transition={{
-              duration: 1.6,
-              repeat: Infinity,
-              ease: [0.45, 0, 0.55, 1],
-              repeatDelay: 0.3,
-            }}
+            animate={shouldReduce ? { y: 0 } : { y: [0, 16, 0] }}
+            transition={
+              shouldReduce
+                ? { duration: 0 }
+                : { duration: 1.6, repeat: Infinity, ease: [0.45, 0, 0.55, 1], repeatDelay: 0.3 }
+            }
           />
         </div>
       </motion.div>

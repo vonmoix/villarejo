@@ -94,8 +94,8 @@ function SkillGroup({ group, index }: { group: (typeof groups)[0]; index: number
               ease: expoOut,
             }}
             whileHover={shouldReduce ? {} : { scale: 1.05, transition: { duration: 0.13, ease: expoOut } }}
-            className="text-[0.8125rem] text-muted bg-surface2 border border-[var(--border-subtle)]
-                       px-3 py-1 rounded-[2px] hover:text-ink hover:border-[var(--border)] transition-colors cursor-default"
+            className="text-[0.8125rem] text-muted bg-surface2 border border-[var(--border)]
+                       px-3 py-1 rounded-[2px] hover:text-ink hover:border-subtle/60 transition-colors cursor-default"
           >
             {tag}
           </motion.span>
